@@ -1,101 +1,70 @@
+// components/EmptyState.tsx
 "use client";
 
-import * as React from "react";
 import { motion } from "framer-motion";
-import { FileText, GitPullRequest, ChevronRight, GitMerge } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { FileText, ArrowRight } from "lucide-react";
 
 interface EmptyStateProps {
   onFetch: () => void;
+  isLoading: boolean;
 }
 
-export function EmptyState({ onFetch }: EmptyStateProps) {
+export function EmptyState({ onFetch, isLoading }: EmptyStateProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, type: "spring", stiffness: 150 }}
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="relative mx-auto mt-10 max-w-4xl rounded-3xl border border-yellow-400 bg-white px-8 py-16 text-center shadow-lg dark:bg-zinc-900"
     >
-      <Card className="glass-card p-10 md:p-16 text-center relative overflow-hidden border-dashed border-2">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
-          <motion.div 
-            className="absolute top-10 left-10 opacity-5 dark:opacity-10"
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
-          >
-            <GitMerge className="h-64 w-64 text-primary" />
-          </motion.div>
+      {/* Decorative Glow */}
+      <div className="absolute -top-5 left-1/2 h-2 w-32 -translate-x-1/2 rounded-full bg-yellow-300 blur-2xl opacity-20" />
 
-          <motion.div 
-            className="absolute -bottom-20 -right-16 opacity-5 dark:opacity-10"
-            animate={{ rotate: -360 }}
-            transition={{ repeat: Infinity, duration: 180, ease: "linear" }}
-          >
-            <GitPullRequest className="h-72 w-72 text-secondary" />
-          </motion.div>
+      {/* Icon */}
+      <motion.div
+        className="mb-6 flex justify-center"
+        initial={{ y: 0 }}
+        animate={{ y: [0, -4, 0] }}
+        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+      >
+        <div className="relative rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 p-5 shadow-lg ring-4 ring-yellow-400/30">
+          <FileText className="h-6 w-6 text-black" />
+          <div className="absolute inset-0 rounded-full bg-yellow-300 blur-lg opacity-10" />
         </div>
+      </motion.div>
 
-        {/* Foreground content */}
-        <div className="max-w-md mx-auto relative z-10">
-          <motion.div 
-            className="flex justify-center mb-8 relative"
-            initial={{ y: 0 }}
-            animate={{ y: [0, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-          >
-            <div className="relative flex items-center justify-center z-10">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full opacity-20 blur-md scale-110"></div>
-              <div className="p-5 bg-gradient-to-br from-primary to-secondary rounded-full shadow-lg">
-                <FileText className="h-10 w-10 text-black dark:text-white" />
-              </div>
-            </div>
-          </motion.div>
+      {/* Title */}
+      <h3 className="text-xl font-bold text-yellow-500 mb-2">No Pull Requests Yet</h3>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            <h3 className="text-2xl font-bold text-gradient mb-3">
-              No Pull Requests Yet
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-sm mx-auto leading-relaxed">
-              Let's get started by fetching your repository's pull requests.
-              Generate comprehensive release notes with just a click.
-            </p>
+      {/* Description */}
+      <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto mb-6">
+        Let’s get started by fetching your repository’s pull requests.
+        Generate comprehensive, AI-powered release notes with just a click.
+      </p>
 
-            <div className="space-y-5">
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex justify-center"
-              >
-                <Button
-                  onClick={onFetch}
-                  size="lg"
-                  className="button-primary px-8 py-6 text-base group relative z-10"
-                >
-                  <span>Fetch Pull Requests</span>
-                  <ChevronRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+      {/* Button */}
+      <motion.button
+        onClick={onFetch}
+        disabled={isLoading}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.97 }}
+        className="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-6 py-3 text-sm font-semibold text-black shadow hover:bg-yellow-500 transition-all disabled:opacity-50"
+      >
+        {isLoading ? (
+          <>
+            <span className="animate-spin">⏳</span> Fetching...
+          </>
+        ) : (
+          <>
+            Fetch Pull Requests <ArrowRight className="h-4 w-4" />
+          </>
+        )}
+      </motion.button>
 
-                  {/* Subtle highlight effect */}
-                  <motion.div 
-                    className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 bg-white/10"
-                    animate={{ opacity: [0, 0.2, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                </Button>
-              </motion.div>
-
-              <p className="text-xs text-muted-foreground z-10 relative">
-                Powered by AI to save your time on writing release notes
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </Card>
-    </motion.div>
+      {/* Footer */}
+      <p className="mt-5 text-xs text-muted-foreground">
+        ⚡ Powered by AI to save your time on writing release notes
+      </p>
+    </motion.section>
   );
 }

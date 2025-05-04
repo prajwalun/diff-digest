@@ -33,42 +33,51 @@ export function PRList({
   onPageChange,
 }: PRListProps) {
   return (
-    <section className="mt-12 space-y-6">
+    <section className="mt-16 space-y-8 animate-fade-in">
+      {/* Header */}
       <motion.div
-        className="flex justify-between items-center mb-6"
+        className="flex justify-between items-center"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold text-gradient">Pull Requests</h2>
-          <span className="pill bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-300">
-            {prs.length} PRs
+        <div className="flex items-center gap-4">
+          <h2 className="text-3xl font-extrabold text-gradient tracking-tight neon-text">
+            PULL REQUESTS
+          </h2>
+          <span className="pill bg-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 border border-yellow-400">
+            {prs.length} ENTRIES
           </span>
         </div>
-        <p className="text-sm text-muted-foreground hidden md:block">
-          Select a PR to generate AI notes
-        </p>
+        <span className="text-sm text-muted-foreground hidden md:block">
+          Awaiting selection
+        </span>
       </motion.div>
 
+      {/* PR Cards */}
       {prs.map((pr) => (
         <motion.div
           key={pr.id}
-          initial={{ opacity: 0, y: 10 }}
+          className="glass-card card-hover border-l-[6px] border-yellow-400 dark:border-yellow-300 transition-all"
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-          className="glass-card card-hover p-6"
+          transition={{ duration: 0.25 }}
         >
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold">
-                <span className="text-yellow-500 font-mono">PR #{pr.number}</span> {pr.title}
+          <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            {/* Left Section */}
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold leading-snug mb-1">
+                <span className="inline-block bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded mr-2 shadow-sm">
+                  PR #{pr.number}
+                </span>
+                {pr.title}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {pr.description.slice(0, 140)}
                 {pr.description.length > 140 ? "..." : ""}
               </p>
-              <div className="mt-2 flex flex-wrap gap-4 text-xs text-muted-foreground">
+
+              <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <CalendarDays className="w-4 h-4" />
                   {pr.mergedAt
@@ -85,21 +94,23 @@ export function PRList({
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-end justify-between">
+
+            {/* Right Section */}
+            <div className="flex flex-col items-end gap-3 min-w-[160px]">
               <a
                 href={pr.url}
                 target="_blank"
-                className="text-blue-500 hover:underline flex items-center gap-1"
+                className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
               >
                 <GithubIcon className="w-4 h-4" /> View on GitHub
               </a>
               <Button
                 variant="default"
-                className="button-accent mt-4"
+                className="button-accent w-full"
                 onClick={() => onGenerateNotes(pr)}
                 disabled={isGenerating && generatingPrId === pr.id}
               >
-                <Sparkles className="w-4 h-4 mr-2" />
+                <Sparkles className="w-4 h-4 mr-1" />
                 {isGenerating && generatingPrId === pr.id
                   ? "Generating..."
                   : "Generate Notes"}
@@ -109,6 +120,7 @@ export function PRList({
         </motion.div>
       ))}
 
+      {/* Pagination */}
       <div className="mt-10">
         <PRPagination
           currentPage={currentPage}

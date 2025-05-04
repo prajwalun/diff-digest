@@ -40,15 +40,16 @@ export function Pagination({
     }
 
     for (let i = start; i <= end; i++) {
+      const isActive = i === currentPage;
       pageNumbers.push(
         <Button
           key={i}
-          variant={i === currentPage ? "default" : "outline"}
+          variant={isActive ? "default" : "outline"}
           className={cn(
-            "text-xs px-3 py-1 h-8 transition-all duration-150",
-            i === currentPage
-              ? "bg-primary text-black font-semibold shadow-sm"
-              : "hover:bg-accent hover:text-black"
+            "text-xs px-3 py-1 h-8 rounded-md border transition-all duration-150",
+            isActive
+              ? "bg-yellow-400 text-black font-semibold shadow-sm border-yellow-400 animate-pulse"
+              : "bg-transparent hover:bg-accent hover:text-black border-border"
           )}
           onClick={() => goToPage(i)}
         >
@@ -63,7 +64,7 @@ export function Pagination({
   return (
     <div
       className={cn(
-        "mt-10 flex justify-center items-center gap-2 flex-wrap",
+        "mt-12 flex justify-center items-center gap-2 flex-wrap animate-fade-in",
         className
       )}
     >
@@ -72,7 +73,7 @@ export function Pagination({
         size="sm"
         onClick={() => goToPage(currentPage - 1)}
         disabled={!canGoBack}
-        className="h-8 w-8 p-0 hover:bg-accent hover:text-black disabled:opacity-40"
+        className="h-8 w-8 p-0 border border-border hover:bg-accent hover:text-black disabled:opacity-40"
       >
         <ChevronLeft className="w-4 h-4" />
       </Button>
@@ -84,7 +85,7 @@ export function Pagination({
         size="sm"
         onClick={() => goToPage(currentPage + 1)}
         disabled={!canGoForward}
-        className="h-8 w-8 p-0 hover:bg-accent hover:text-black disabled:opacity-40"
+        className="h-8 w-8 p-0 border border-border hover:bg-accent hover:text-black disabled:opacity-40"
       >
         <ChevronRight className="w-4 h-4" />
       </Button>

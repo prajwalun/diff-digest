@@ -89,6 +89,26 @@
     text-shadow: 0 0 4px oklch(var(--primary)), 0 0 10px oklch(var(--primary));
   }
 
+  .glow-circle {
+    box-shadow: 0 0 20px rgba(255, 221, 0, 0.7);
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 12px rgba(255, 221, 0, 0.5);
+  }
+
+  .shadow-glow-dark {
+    box-shadow: 0 0 12px rgba(255, 221, 0, 0.3), 0 0 30px rgba(255, 221, 0, 0.2);
+  }
+  
+  
+  .bg-pattern {
+    background-image: url("/pattern.svg");
+    background-repeat: repeat;
+    opacity: 0.05;
+  }
+  
+
   .typing-effect {
     overflow: hidden;
     white-space: nowrap;

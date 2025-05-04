@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { EmptyState } from "./components/EmptyState";
-import { FetchPRSelection } from "@/components/FetchPRSelection";
+import { HeroBanner } from "@/components/HeroBanner";
 import { PRList } from "@/components/PRList";
-import { NoteViewer } from "@/components/NoteViewer";
-import { Pagination } from "@/components/Pagination";
+import { NoteViewer } from "./components/NoteViewer";
+import { Pagination } from "./components/Pagination";
 import { PullRequest } from "../lib/types";
 
 interface ApiResponse {
@@ -84,32 +84,33 @@ export default function Home() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        {initialFetchDone && (
-          <FetchPRSelection onFetch={() => fetchDiffs(1)} isLoading={isLoading} />
-        )}
+        {/* ✅ Hero Banner */}
+        <HeroBanner onFetch={() => fetchDiffs(1)} isLoading={isLoading} />
 
+        {/* ❌ Error State */}
         {error && (
           <div className="text-red-600 bg-red-100 dark:bg-red-900/30 p-3 rounded mb-4">
             Error: {error}
           </div>
         )}
 
+        {/* 🕳️ Empty State */}
         {!initialFetchDone && !isLoading && (
           <EmptyState onFetch={() => fetchDiffs(1)} />
         )}
 
+        {/* ✅ PR List Section */}
         {diffs.length > 0 && (
           <>
             <PRList
-  prs={diffs}
-  onGenerateNotes={handleGenerateNotes}
-  isGenerating={streaming}
-  generatingPrId={selectedPR?.id ?? null}
-  currentPage={currentPage}
-  totalPages={totalPages}
-  onPageChange={(page) => fetchDiffs(page)}
-/>
-
+              prs={diffs}
+              onGenerateNotes={handleGenerateNotes}
+              isGenerating={streaming}
+              generatingPrId={selectedPR?.id ?? null}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => fetchDiffs(page)}
+            />
 
             <Pagination
               currentPage={currentPage}
@@ -119,6 +120,7 @@ export default function Home() {
           </>
         )}
 
+        {/* 📝 Generated Notes */}
         <motion.div
           ref={notesRef}
           initial={{ opacity: 0 }}

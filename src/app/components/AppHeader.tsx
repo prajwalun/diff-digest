@@ -3,59 +3,57 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { GitCompare, GithubIcon } from "lucide-react";
+import { GithubIcon, Zap } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "../../lib/utils";
 
-interface AppHeaderProps {
-  title?: string;
-  isLoading?: boolean;
-}
-
-export function AppHeader({ title = "Diff Digest", isLoading = false }: AppHeaderProps) {
+export function AppHeader() {
   return (
-    <header className="bg-background/80 backdrop-blur-sm shadow-md sticky top-0 z-20 border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-        <motion.div 
-          className="flex items-center space-x-3"
+    <header className="bg-background/90 backdrop-blur-md sticky top-0 z-50 border-b border-border shadow-xl">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Logo and Title */}
+        <motion.div
+          className="flex items-center gap-4"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4 }}
         >
-          <div className="bg-gradient-to-br from-primary to-secondary rounded-lg p-1.5 shadow-md">
-            <GitCompare className="h-6 w-6 text-white" />
+          <div className="rounded-full p-2 bg-gradient-to-br from-yellow-400 to-orange-500 shadow-glow animate-pulse">
+            <Zap className="w-6 h-6 text-black drop-shadow-md" />
           </div>
+
           <div>
-            <h1 className="text-xl font-bold text-gradient">
-              {title}
+            <h1 className="text-xl font-extrabold text-gradient tracking-tight neon-text">
+              DIFFDIGEST
             </h1>
-            <p className="text-xs text-muted-foreground hidden sm:block">
+            <p className="text-xs text-muted-foreground">
               AI-Powered Release Notes
             </p>
           </div>
         </motion.div>
 
-        <div className="flex items-center space-x-4">
-          {isLoading && (
-            <div className="flex items-center text-sm text-muted-foreground animate-pulse">
-              <div className="h-2 w-2 bg-primary rounded-full mr-2 animate-ping"></div>
-              Processing...
-            </div>
-          )}
+        {/* Right Side: GitHub, Status, Theme */}
+        <motion.div
+          className="flex items-center gap-4"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="text-xs px-3 py-1 rounded-full bg-muted text-muted-foreground font-medium tracking-wide border border-border hidden md:block">
+            Ready to generate notes
+          </div>
 
-          <motion.a
+          <a
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-primary transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="hover:text-primary transition-colors"
           >
-            <GithubIcon className="h-5 w-5" />
-          </motion.a>
+            <GithubIcon className="w-5 h-5" />
+          </a>
 
           <ThemeToggle />
-        </div>
+        </motion.div>
       </div>
     </header>
   );

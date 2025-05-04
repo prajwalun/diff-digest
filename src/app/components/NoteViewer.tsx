@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import StreamingTypewriter from "./StreamingTypewriter";
-import { Card } from "@/components/ui/card";
 import { Sparkles, BrainCircuit } from "lucide-react";
 
 interface NoteViewerProps {
@@ -21,31 +20,35 @@ export function NoteViewer({ notes, isGenerating }: NoteViewerProps) {
   const { developerNotes, marketingNotes, prNumber, prTitle, generatedAt } = notes;
 
   return (
-    <section className="mt-12 space-y-8">
+    <section className="mt-16 space-y-10 animate-fade-in">
+      {/* Header */}
       <motion.div
         className="text-center"
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <h2 className="text-3xl font-bold text-gradient mb-2">Generated Release Notes</h2>
+        <h2 className="text-3xl font-extrabold text-gradient neon-text mb-2 tracking-tight">
+          Generated Release Notes
+        </h2>
         <p className="text-sm text-muted-foreground">
-          For PR #{prNumber}: <span className="italic">{prTitle}</span>
+          For PR <span className="font-mono text-yellow-400">#{prNumber}</span> —{" "}
+          <span className="italic">{prTitle}</span>
         </p>
       </motion.div>
 
       {/* Developer Notes */}
       <motion.div
-        className="glass-card cyberpunk-border relative p-6"
+        className="glass-card relative border-l-4 border-yellow-400 dark:border-yellow-300 p-6 shadow-lg transition-all"
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="absolute top-4 right-4 text-yellow-500">
-          <BrainCircuit className="w-6 h-6 animate-pulse" />
+        <div className="absolute top-4 right-4 text-yellow-400">
+          <BrainCircuit className="w-7 h-7 animate-pulse-slow drop-shadow" />
         </div>
-        <h3 className="text-xl font-semibold text-gradient mb-3">🧠 Developer Notes</h3>
-        <div className="whitespace-pre-wrap text-sm text-foreground">
+        <h3 className="text-xl font-bold text-gradient mb-3">🧠 Developer Notes</h3>
+        <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed">
           {isGenerating ? (
             <StreamingTypewriter fullText={developerNotes} speed={12} />
           ) : (
@@ -56,16 +59,16 @@ export function NoteViewer({ notes, isGenerating }: NoteViewerProps) {
 
       {/* Marketing Notes */}
       <motion.div
-        className="glass-card cyberpunk-border relative p-6"
+        className="glass-card relative border-l-4 border-yellow-400 dark:border-yellow-300 p-6 shadow-lg transition-all"
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4 }}
       >
-        <div className="absolute top-4 right-4 text-yellow-500">
-          <Sparkles className="w-6 h-6 animate-pulse-slow" />
+        <div className="absolute top-4 right-4 text-yellow-400">
+          <Sparkles className="w-7 h-7 animate-pulse drop-shadow" />
         </div>
-        <h3 className="text-xl font-semibold text-gradient mb-3">📢 Marketing Notes</h3>
-        <div className="whitespace-pre-wrap text-sm text-foreground">
+        <h3 className="text-xl font-bold text-gradient mb-3">📢 Marketing Notes</h3>
+        <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed">
           {isGenerating ? (
             <StreamingTypewriter fullText={marketingNotes} speed={12} />
           ) : (
@@ -75,9 +78,14 @@ export function NoteViewer({ notes, isGenerating }: NoteViewerProps) {
       </motion.div>
 
       {/* Timestamp */}
-      <p className="text-xs text-muted-foreground text-right mt-4">
+      <motion.div
+        className="text-right text-xs text-muted-foreground italic"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
         Generated on {new Date(generatedAt).toLocaleString()}
-      </p>
+      </motion.div>
     </section>
   );
 }
