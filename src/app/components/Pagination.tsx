@@ -1,101 +1,93 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { motion } from "framer-motion"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { cn } from "../../lib/utils"
+import * as React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "../../lib/utils";
 
 interface PaginationProps {
-  currentPage: number
-  totalPages: number
-  onPageChange: (page: number) => void
-  siblingCount?: number
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  className?: string;
 }
 
 export function Pagination({
   currentPage,
   totalPages,
   onPageChange,
-  siblingCount = 1,
+  className,
 }: PaginationProps) {
-  const DOTS = "..."
-  
-  const generateRange = (start: number, end: number) => {
-    const length = end - start + 1
-    return Array.from({ length }, (_, i) => start + i)
-  }
+  const canGoBack = currentPage > 1;
+  const canGoForward = currentPage < totalPages;
 
-  const getPaginationRange = () => {
-    const totalPageNumbers = siblingCount * 2 + 5
-    if (totalPageNumbers >= totalPages) return generateRange(1, totalPages)
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      onPageChange(page);
+    }
+  };
 
-    const leftSibling = Math.max(currentPage - siblingCount, 1)
-    const rightSibling = Math.min(currentPage + siblingCount, totalPages)
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const visiblePages = 5;
+    const half = Math.floor(visiblePages / 2);
 
-    const showLeftDots = leftSibling > 2
-    const showRightDots = rightSibling < totalPages - 1
+    let start = Math.max(1, currentPage - half);
+    let end = Math.min(totalPages, start + visiblePages - 1);
 
-    const firstPageIndex = 1
-    const lastPageIndex = totalPages
-
-    if (!showLeftDots && showRightDots) {
-      const leftRange = generateRange(1, 3 + 2 * siblingCount)
-      return [...leftRange, DOTS, totalPages]
+    if (end - start < visiblePages - 1) {
+      start = Math.max(1, end - visiblePages + 1);
     }
 
-    if (showLeftDots && !showRightDots) {
-      const rightRange = generateRange(totalPages - (2 + 2 * siblingCount), totalPages)
-      return [firstPageIndex, DOTS, ...rightRange]
+    for (let i = start; i <= end; i++) {
+      pageNumbers.push(
+        <Button
+          key={i}
+          variant={i === currentPage ? "default" : "outline"}
+          className={cn(
+            "text-xs px-3 py-1 h-8 transition-all duration-150",
+            i === currentPage
+              ? "bg-primary text-black font-semibold shadow-sm"
+              : "hover:bg-accent hover:text-black"
+          )}
+          onClick={() => goToPage(i)}
+        >
+          {i}
+        </Button>
+      );
     }
 
-    if (showLeftDots && showRightDots) {
-      const middleRange = generateRange(leftSibling, rightSibling)
-      return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex]
-    }
-  }
-
-  const paginationRange = getPaginationRange()
-
-  if (!paginationRange || paginationRange.length < 2) return null
+    return pageNumbers;
+  };
 
   return (
-    <motion.nav 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="mt-10 flex justify-center items-center gap-2"
+    <div
+      className={cn(
+        "mt-10 flex justify-center items-center gap-2 flex-wrap",
+        className
+      )}
     >
-      <button
-        className="px-3 py-2 rounded-md text-sm bg-accent text-accent-foreground hover:bg-accent/60 transition disabled:opacity-30"
-        disabled={currentPage === 1}
-        onClick={() => onPageChange(currentPage - 1)}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => goToPage(currentPage - 1)}
+        disabled={!canGoBack}
+        className="h-8 w-8 p-0 hover:bg-accent hover:text-black disabled:opacity-40"
       >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
+        <ChevronLeft className="w-4 h-4" />
+      </Button>
 
-      {paginationRange.map((page, i) => (
-        <button
-          key={i}
-          onClick={() => typeof page === "number" && onPageChange(page)}
-          disabled={page === DOTS}
-          className={cn(
-            "px-4 py-2 rounded-md text-sm font-medium transition",
-            page === currentPage
-              ? "bg-primary text-white"
-              : "bg-background text-muted-foreground hover:bg-accent/30",
-            page === DOTS && "cursor-default opacity-60"
-          )}
-        >
-          {page}
-        </button>
-      ))}
+      {renderPageNumbers()}
 
-      <button
-        className="px-3 py-2 rounded-md text-sm bg-accent text-accent-foreground hover:bg-accent/60 transition disabled:opacity-30"
-        disabled={currentPage === totalPages}
-        onClick={() => onPageChange(currentPage + 1)}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => goToPage(currentPage + 1)}
+        disabled={!canGoForward}
+        className="h-8 w-8 p-0 hover:bg-accent hover:text-black disabled:opacity-40"
       >
-        <ChevronRight className="h-4 w-4" />
-      </button>
-    </motion.nav>
-  )
+        <ChevronRight className="w-4 h-4" />
+      </Button>
+    </div>
+  );
 }

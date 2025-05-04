@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { EmptyState } from "./components/EmptyState";
-import { FetchPRSelection } from "./components/FetchPRSelection";
-import { PRList } from "./components/PRList";
-import { NoteViewer } from "./components/NoteViewer";
-import { Pagination } from "./components/Pagination";
-import { PullRequest } from "../lib/types"; 
+import { FetchPRSelection } from "@/components/FetchPRSelection";
+import { PRList } from "@/components/PRList";
+import { NoteViewer } from "@/components/NoteViewer";
+import { Pagination } from "@/components/Pagination";
+import { PullRequest } from "../lib/types";
 
 interface ApiResponse {
   diffs: PullRequest[];
@@ -66,6 +66,7 @@ export default function Home() {
       const [dev, marketing] = text.split("[MARKETING]");
       setDevNotes(dev.trim());
       setMarketingNotes(marketing.trim());
+
       setTimeout(() => {
         notesRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 200);
@@ -78,52 +79,66 @@ export default function Home() {
 
   return (
     <main className="px-4 sm:px-6 lg:px-8 py-10 max-w-5xl mx-auto">
-      <FetchPRSelection onFetch={() => fetchDiffs(1)} isLoading={isLoading} />
-
-      {error && (
-        <div className="text-red-600 bg-red-100 dark:bg-red-900/30 p-3 rounded mb-4">
-          Error: {error}
-        </div>
-      )}
-
-      {!initialFetchDone && !isLoading && <EmptyState onFetch={() => fetchDiffs(1)} />}
-
-      {diffs.length > 0 && (
-        <>
-          <PRList
-            prs={diffs}
-            onGenerateNotes={handleGenerateNotes}
-            isGenerating={streaming}
-            generatingPrId={selectedPR?.id ?? null}
-          />
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => fetchDiffs(page)}
-          />
-        </>
-      )}
-
       <motion.div
-        ref={notesRef}
         initial={{ opacity: 0 }}
-        animate={{ opacity: selectedPR ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
       >
-        {selectedPR && (
-          <NoteViewer
-            notes={{
-              developerNotes: devNotes,
-              marketingNotes: marketingNotes,
-              prNumber: selectedPR.number,
-              prTitle: selectedPR.title,
-              generatedAt: new Date().toISOString(),
-              prId: selectedPR.id, // ✅ Now number type
-            }}
-            isGenerating={streaming}
-          />
+        {initialFetchDone && (
+          <FetchPRSelection onFetch={() => fetchDiffs(1)} isLoading={isLoading} />
         )}
+
+        {error && (
+          <div className="text-red-600 bg-red-100 dark:bg-red-900/30 p-3 rounded mb-4">
+            Error: {error}
+          </div>
+        )}
+
+        {!initialFetchDone && !isLoading && (
+          <EmptyState onFetch={() => fetchDiffs(1)} />
+        )}
+
+        {diffs.length > 0 && (
+          <>
+            <PRList
+  prs={diffs}
+  onGenerateNotes={handleGenerateNotes}
+  isGenerating={streaming}
+  generatingPrId={selectedPR?.id ?? null}
+  currentPage={currentPage}
+  totalPages={totalPages}
+  onPageChange={(page) => fetchDiffs(page)}
+/>
+
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => fetchDiffs(page)}
+            />
+          </>
+        )}
+
+        <motion.div
+          ref={notesRef}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: selectedPR ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {selectedPR && (
+            <NoteViewer
+              notes={{
+                developerNotes: devNotes,
+                marketingNotes: marketingNotes,
+                prNumber: selectedPR.number,
+                prTitle: selectedPR.title,
+                generatedAt: new Date().toISOString(),
+                prId: selectedPR.id,
+              }}
+              isGenerating={streaming}
+            />
+          )}
+        </motion.div>
       </motion.div>
     </main>
   );

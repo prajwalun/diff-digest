@@ -1,8 +1,10 @@
+"use client";
+
 import * as React from "react";
 import { motion } from "framer-motion";
 import { FileText, GitPullRequest, ChevronRight, GitMerge } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Card } from "../components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface EmptyStateProps {
   onFetch: () => void;
@@ -16,7 +18,8 @@ export function EmptyState({ onFetch }: EmptyStateProps) {
       transition={{ duration: 0.5, type: "spring", stiffness: 150 }}
     >
       <Card className="glass-card p-10 md:p-16 text-center relative overflow-hidden border-dashed border-2">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
           <motion.div 
             className="absolute top-10 left-10 opacity-5 dark:opacity-10"
             animate={{ rotate: 360 }}
@@ -34,17 +37,18 @@ export function EmptyState({ onFetch }: EmptyStateProps) {
           </motion.div>
         </div>
 
+        {/* Foreground content */}
         <div className="max-w-md mx-auto relative z-10">
           <motion.div 
-            className="flex justify-center mb-8"
+            className="flex justify-center mb-8 relative"
             initial={{ y: 0 }}
             animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
           >
-            <div className="relative flex items-center justify-center">
+            <div className="relative flex items-center justify-center z-10">
               <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full opacity-20 blur-md scale-110"></div>
               <div className="p-5 bg-gradient-to-br from-primary to-secondary rounded-full shadow-lg">
-                <FileText className="h-10 w-10 text-white" />
+                <FileText className="h-10 w-10 text-black dark:text-white" />
               </div>
             </div>
           </motion.div>
@@ -71,11 +75,12 @@ export function EmptyState({ onFetch }: EmptyStateProps) {
                 <Button
                   onClick={onFetch}
                   size="lg"
-                  className="button-primary px-8 py-6 text-base group relative"
+                  className="button-primary px-8 py-6 text-base group relative z-10"
                 >
                   <span>Fetch Pull Requests</span>
                   <ChevronRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
 
+                  {/* Subtle highlight effect */}
                   <motion.div 
                     className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 bg-white/10"
                     animate={{ opacity: [0, 0.2, 0] }}
@@ -84,7 +89,7 @@ export function EmptyState({ onFetch }: EmptyStateProps) {
                 </Button>
               </motion.div>
 
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground z-10 relative">
                 Powered by AI to save your time on writing release notes
               </p>
             </div>

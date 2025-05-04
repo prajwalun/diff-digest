@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface StreamingTypewriterProps {
   fullText: string;
-  speed?: number; // ms per character
+  speed?: number;
   pauseAfterPunctuation?: boolean;
   showCursor?: boolean;
   onComplete?: () => void;
@@ -27,7 +28,7 @@ export default function StreamingTypewriter({
     setFinished(false);
     charIndex.current = 0;
 
-    const chars = Array.from(fullText); // Unicode-safe
+    const chars = Array.from(fullText);
 
     const stream = () => {
       if (charIndex.current >= chars.length) {
@@ -37,13 +38,11 @@ export default function StreamingTypewriter({
       }
 
       const nextChar = chars[charIndex.current];
-      setDisplayed(chars.slice(0, charIndex.current + 1).join(""));
+      setDisplayed((prev) => prev + nextChar);
       charIndex.current += 1;
 
-      let delay = speed;
-      if (pauseAfterPunctuation && /[.,!?;\n]/.test(nextChar)) {
-        delay += 100;
-      }
+      const punctuationPause = pauseAfterPunctuation && /[.,!?;\n]/.test(nextChar);
+      const delay = punctuationPause ? speed + 100 : speed;
 
       timeout.current = setTimeout(stream, delay);
     };
@@ -56,16 +55,16 @@ export default function StreamingTypewriter({
   }, [fullText, speed, pauseAfterPunctuation, onComplete]);
 
   return (
-    <span className="inline whitespace-pre-wrap break-words font-mono leading-relaxed">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-muted dark:bg-gray-900/50 border border-muted-foreground/10 rounded-xl p-4 text-sm font-mono text-foreground dark:text-white whitespace-pre-wrap"
+    >
       {displayed}
       {!finished && showCursor && (
-        <span
-          aria-hidden="true"
-          className="animate-pulse ml-0.5 text-muted-foreground"
-        >
-          |
-        </span>
+        <span className="animate-pulse text-primary ml-0.5">|</span>
       )}
-    </span>
+    </motion.div>
   );
 }
