@@ -1,70 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { AppHeader } from "./components/AppHeader";
-import { FetchPRSelection } from "./components/FetchPRSelection";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { EmptyState } from "./components/EmptyState";
+import { FetchPRSelection } from "./components/FetchPRSelection";
 import { PRList } from "./components/PRList";
 import { NoteViewer } from "./components/NoteViewer";
-import { ThemeProvider } from "./components/providers/theme-provider";
-import { motion } from "framer-motion";
-
-interface DiffItem {
-  id: string;
-  description: string;
-  diff: string;
-  url: string;
-}
+import { Pagination } from "./components/Pagination";
+import { PullRequest } from "../lib/types"; 
 
 interface ApiResponse {
-  diffs: DiffItem[];
+  diffs: PullRequest[];
   nextPage: number | null;
   currentPage: number;
   perPage: number;
+  totalPages: number;
 }
 
 export default function Home() {
-  const [diffs, setDiffs] = useState<DiffItem[]>([]);
+  const [diffs, setDiffs] = useState<PullRequest[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [nextPage, setNextPage] = useState<number | null>(null);
-  const [selectedPR, setSelectedPR] = useState<DiffItem | null>(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
+  const [selectedPR, setSelectedPR] = useState<PullRequest | null>(null);
   const [devNotes, setDevNotes] = useState("");
   const [marketingNotes, setMarketingNotes] = useState("");
   const [streaming, setStreaming] = useState(false);
 
-  const fetchDiffs = async (page: number) => {
+  const notesRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchDiffs = async (page = 1) => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/sample-diffs?page=${page}&per_page=10`);
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(`Failed to fetch diffs: ${msg}`);
-      }
+      const res = await fetch(`/api/sample-diffs?page=${page}&per_page=5`);
+      if (!res.ok) throw new Error("Failed to fetch diffs");
       const data: ApiResponse = await res.json();
-      setDiffs((prev) => (page === 1 ? data.diffs : [...prev, ...data.diffs]));
+      setDiffs(data.diffs);
       setCurrentPage(data.currentPage);
-      setNextPage(data.nextPage);
+      setTotalPages(data.totalPages);
+      setInitialFetchDone(true);
     } catch (err) {
-      setError((err as Error).message || "An unknown error occurred");
+      setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleFetchClick = () => {
-    setSelectedPR(null);
-    setDiffs([]);
-    fetchDiffs(1);
-  };
-
-  const handleLoadMoreClick = () => {
-    if (nextPage) fetchDiffs(nextPage);
-  };
-
-  const handleGenerateNotes = async (pr: DiffItem) => {
+  const handleGenerateNotes = async (pr: PullRequest) => {
     setDevNotes("");
     setMarketingNotes("");
     setStreaming(true);
@@ -73,26 +58,18 @@ export default function Home() {
     try {
       const res = await fetch("/api/generate-notes", {
         method: "POST",
-        body: JSON.stringify({
-          title: pr.description,
-          diff: pr.diff,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: pr.description, diff: pr.diff }),
       });
-
-      if (!res.ok) {
-        setDevNotes("Error generating notes.");
-        setStreaming(false);
-        return;
-      }
 
       const text = await res.text();
       const [dev, marketing] = text.split("[MARKETING]");
-      setDevNotes((dev || "").replace(/Developer Notes:/gi, "").trim());
-      setMarketingNotes((marketing || "").replace(/Marketing Notes:/gi, "").trim());
-    } catch (err) {
+      setDevNotes(dev.trim());
+      setMarketingNotes(marketing.trim());
+      setTimeout(() => {
+        notesRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
+    } catch {
       setDevNotes("Error generating notes.");
     } finally {
       setStreaming(false);
@@ -100,49 +77,54 @@ export default function Home() {
   };
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <motion.main
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white flex flex-col"
-      >
-        <AppHeader title="Diff Digest" isLoading={isLoading} />
+    <main className="px-4 sm:px-6 lg:px-8 py-10 max-w-5xl mx-auto">
+      <FetchPRSelection onFetch={() => fetchDiffs(1)} isLoading={isLoading} />
 
-        <div className="flex-1 max-w-5xl mx-auto px-6 py-10">
-          {!diffs.length && !isLoading ? (
-            <EmptyState onFetch={handleFetchClick} />
-          ) : (
-            <>
-              <FetchPRSelection onFetch={handleFetchClick} isLoading={isLoading} />
-
-              <PRList
-                prs={diffs}
-                onGenerate={handleGenerateNotes}
-                generatingId={streaming ? selectedPR?.id ?? null : null}
-                isLoading={streaming}
-                onPageChange={handleLoadMoreClick}
-                currentPage={currentPage}
-                totalPages={nextPage ? nextPage : currentPage}
-                error={error}
-              />
-
-              {selectedPR && (
-                <NoteViewer
-                  notes={{
-                    prId: Number(selectedPR.id),
-                    prTitle: selectedPR.description,
-                    developerNotes: devNotes,
-                    marketingNotes: marketingNotes,
-                    generatedAtts: [],
-                  }}
-                  isGenerating={streaming}
-                />
-              )}
-            </>
-          )}
+      {error && (
+        <div className="text-red-600 bg-red-100 dark:bg-red-900/30 p-3 rounded mb-4">
+          Error: {error}
         </div>
-      </motion.main>
-    </ThemeProvider>
+      )}
+
+      {!initialFetchDone && !isLoading && <EmptyState onFetch={() => fetchDiffs(1)} />}
+
+      {diffs.length > 0 && (
+        <>
+          <PRList
+            prs={diffs}
+            onGenerateNotes={handleGenerateNotes}
+            isGenerating={streaming}
+            generatingPrId={selectedPR?.id ?? null}
+          />
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => fetchDiffs(page)}
+          />
+        </>
+      )}
+
+      <motion.div
+        ref={notesRef}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: selectedPR ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {selectedPR && (
+          <NoteViewer
+            notes={{
+              developerNotes: devNotes,
+              marketingNotes: marketingNotes,
+              prNumber: selectedPR.number,
+              prTitle: selectedPR.title,
+              generatedAt: new Date().toISOString(),
+              prId: selectedPR.id, // ✅ Now number type
+            }}
+            isGenerating={streaming}
+          />
+        )}
+      </motion.div>
+    </main>
   );
 }

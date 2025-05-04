@@ -1,43 +1,69 @@
-"use client";
-
 import * as React from "react";
 import { motion } from "framer-motion";
 import { GitCompare, GithubIcon } from "lucide-react";
-import { ThemeToggle } from "./ui/theme-toggle";
+import { ThemeToggle } from "../components/ui/theme-toggle";
+import { cn } from "../../lib/utils";
 
-export function AppHeader({ title = "Diff Digest", isLoading = false }) {
+interface AppHeaderProps {
+  title?: string;
+  isLoading?: boolean;
+}
+
+export function AppHeader({ title = "Diff Digest", isLoading = false }: AppHeaderProps) {
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="w-full sticky top-0 z-50 bg-black/50 backdrop-blur-md border-b border-border shadow-md"
-    >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-3">
-          <motion.div
-            animate={isLoading ? { rotate: 360 } : { rotate: 0 }}
-            transition={{ repeat: isLoading ? Infinity : 0, duration: 1.5, ease: "linear" }}
-            className="p-2 bg-primary/10 rounded-full"
-          >
-            <GitCompare className="w-6 h-6 text-primary drop-shadow" />
-          </motion.div>
-          <span className="text-2xl font-bold tracking-tight text-foreground drop-shadow-sm">
-            {title}
-          </span>
-          <a
-            href="https://github.com/"
+    <header className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-sm sticky top-0 z-10 transition-all duration-200 border-b border-gray-100 dark:border-gray-700">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+        <motion.div
+          className="flex items-center space-x-3"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="bg-gradient-to-br from-primary to-secondary rounded-lg p-1.5 shadow-md">
+            <GitCompare className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              {title}
+            </h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
+              AI-Powered Release Notes
+            </p>
+          </div>
+        </motion.div>
+
+        <div className="flex items-center space-x-4">
+          {isLoading && (
+            <div className="flex items-center">
+              <div className="h-2 w-2 bg-primary rounded-full mr-2 animate-ping"></div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">Processing</span>
+            </div>
+          )}
+
+          <motion.a
+            href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-2 text-muted-foreground hover:text-primary transition-colors"
-            aria-label="GitHub"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <GithubIcon className="w-6 h-6" />
-          </a>
-        </div>
+            <GithubIcon className="h-5 w-5" />
+          </motion.a>
 
-        <ThemeToggle />
+          <div
+            className={cn(
+              "hidden md:flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-accent text-accent-foreground transition-all",
+              isLoading &&
+                "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground animate-pulse-slow"
+            )}
+          >
+            {isLoading ? "Processing request..." : "Ready to generate notes"}
+          </div>
+
+          <ThemeToggle />
+        </div>
       </div>
-    </motion.header>
+    </header>
   );
 }

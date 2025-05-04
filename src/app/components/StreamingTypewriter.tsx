@@ -1,37 +1,71 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface StreamingTypewriterProps {
   fullText: string;
-  speed?: number;
+  speed?: number; // ms per character
+  pauseAfterPunctuation?: boolean;
   showCursor?: boolean;
+  onComplete?: () => void;
 }
 
-export default function StreamingTypewriter({ fullText, speed = 20, showCursor = true }: StreamingTypewriterProps) {
+export default function StreamingTypewriter({
+  fullText,
+  speed = 15,
+  pauseAfterPunctuation = true,
+  showCursor = true,
+  onComplete,
+}: StreamingTypewriterProps) {
   const [displayed, setDisplayed] = useState("");
   const [finished, setFinished] = useState(false);
   const charIndex = useRef(0);
+  const timeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const chars = Array.from(fullText);
-    const interval = setInterval(() => {
+    setDisplayed("");
+    setFinished(false);
+    charIndex.current = 0;
+
+    const chars = Array.from(fullText); // Unicode-safe
+
+    const stream = () => {
       if (charIndex.current >= chars.length) {
-        clearInterval(interval);
         setFinished(true);
+        onComplete?.();
         return;
       }
-      setDisplayed((prev) => prev + chars[charIndex.current]);
-      charIndex.current += 1;
-    }, speed);
 
-    return () => clearInterval(interval);
-  }, [fullText, speed]);
+      const nextChar = chars[charIndex.current];
+      setDisplayed(chars.slice(0, charIndex.current + 1).join(""));
+      charIndex.current += 1;
+
+      let delay = speed;
+      if (pauseAfterPunctuation && /[.,!?;\n]/.test(nextChar)) {
+        delay += 100;
+      }
+
+      timeout.current = setTimeout(stream, delay);
+    };
+
+    timeout.current = setTimeout(stream, speed);
+
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, [fullText, speed, pauseAfterPunctuation, onComplete]);
 
   return (
-    <span className="whitespace-pre-wrap break-words font-mono leading-relaxed text-yellow-300">
+    <span className="inline whitespace-pre-wrap break-words font-mono leading-relaxed">
       {displayed}
-      {showCursor && !finished && <span className="ml-1 animate-pulse">|</span>}
+      {!finished && showCursor && (
+        <span
+          aria-hidden="true"
+          className="animate-pulse ml-0.5 text-muted-foreground"
+        >
+          |
+        </span>
+      )}
     </span>
   );
 }
