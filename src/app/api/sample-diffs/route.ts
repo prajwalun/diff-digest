@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Octokit } from '@octokit/rest';
 
 // Initialize Octokit. Use GITHUB_TOKEN environment variable for authentication if available.
@@ -11,7 +11,7 @@ const octokit = new Octokit({
 const DEFAULT_OWNER = 'openai';
 const DEFAULT_REPO = 'openai-node';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const owner = process.env.GITHUB_OWNER || searchParams.get('owner') || DEFAULT_OWNER;
     const repo = process.env.GITHUB_REPO || searchParams.get('repo') || DEFAULT_REPO;
@@ -58,12 +58,18 @@ export async function GET(request: Request) {
                 // The diff content is directly in the data for this media type
                 const diffText = diffResponse.data as unknown as string; // Octokit types might be slightly off for mediaType requests
 
-                return {
-                    id: pr.number.toString(), // Use PR number as ID
-                    description: pr.title,
-                    diff: diffText,
-                    url: pr.html_url, // Add the PR URL for context
-                };
+                // For the PR metadata in the diffsPromises map section:
+return {
+  id: pr.number.toString(), // Use PR number as ID
+  description: pr.title,
+  diff: diffText,
+  url: pr.html_url, // Add the PR URL for context
+  // Add these fields for better UI display - with type safety
+  authorName: pr.user?.login || 'Unknown',
+  mergedAt: pr.merged_at || '',
+  // Instead of pr.changed_files which isn't available:
+  filesChanged: (diffText.match(/^diff --git/gm) || []).length, // Count diffs in the text
+};
             } catch (diffError) {
                 let message = 'Unknown error fetching diff';
                 if (diffError instanceof Error) {
@@ -89,6 +95,10 @@ export async function GET(request: Request) {
             }
         }
 
+        // Simple heuristic if Link header is missing - if we got full page, there might be more
+        if (nextPage === null && diffResults.length === per_page) {
+            nextPage = page + 1;
+        }
 
         return NextResponse.json({
             diffs: diffResults,

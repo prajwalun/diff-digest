@@ -1,0 +1,72 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
+/* Custom variables and base styles */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 210 12% 16%;
+    /* ... more variables ... */
+  }
+
+  .dark {
+    --background: 215 21% 11%;
+    --foreground: 210 40% 98%;
+    /* ... more dark theme variables ... */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* GitHub-specific styles */
+.gh-header {
+  @apply bg-card border-b border-border;
+}
+
+.gh-btn-primary {
+  @apply bg-[#2da44e] text-white hover:bg-[#2c974b] border border-[#1b1f2426] shadow-sm;
+}
+
+.gh-toast {
+  @apply bg-card border border-border shadow-lg rounded-md;
+}
+
+.gh-hover {
+  @apply hover:bg-secondary transition-colors duration-150;
+}
+
+/* Syntax highlighting */
+.prose code {
+  @apply rounded-md px-1 py-0.5 bg-secondary text-foreground;
+}
+
+.prose pre {
+  @apply rounded-md p-4 bg-secondary/50 border border-border;
+}
+
+/* Scrollbars */
+.scrollable {
+  @apply overflow-auto;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 20px;
+}

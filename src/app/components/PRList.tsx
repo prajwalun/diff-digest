@@ -1,17 +1,12 @@
+// components/PRList.tsx
 "use client";
 
-import { motion } from "framer-motion";
-import { PullRequest } from "../../lib/types";
-import { Button } from "../components/ui/button";
-import {
-  GithubIcon,
-  Sparkles,
-  Users,
-  Files,
-  CalendarDays,
-} from "lucide-react";
-import { Pagination as PRPagination } from "@/components/Pagination";
-import { formatDistanceToNow } from "date-fns";
+import * as React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { GitPullRequest } from "lucide-react";
+import { PullRequest } from "@/lib/types";
+import { Pagination as PRPagination } from "./Pagination";
+import { PRCard } from "./PRCard";
 
 interface PRListProps {
   prs: PullRequest[];
@@ -21,6 +16,9 @@ interface PRListProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  hasMorePages?: boolean;
+  onFetchMore?: () => void;
+  isLoadingMore?: boolean;
 }
 
 export function PRList({
@@ -31,103 +29,84 @@ export function PRList({
   currentPage,
   totalPages,
   onPageChange,
+  hasMorePages = false,
+  onFetchMore,
+  isLoadingMore = false,
 }: PRListProps) {
-  return (
-    <section className="mt-16 space-y-8 animate-fade-in">
-      {/* Header */}
-      <motion.div
-        className="flex justify-between items-center"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="flex items-center gap-4">
-          <h2 className="text-3xl font-extrabold text-gradient tracking-tight neon-text">
-            PULL REQUESTS
-          </h2>
-          <span className="pill bg-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 border border-yellow-400">
-            {prs.length} ENTRIES
-          </span>
+  // Display empty state when no PRs
+  if (!prs || prs.length === 0) {
+    return (
+      <div className="text-center p-8 border border-border rounded-md bg-secondary/30">
+        <div className="relative mb-6">
+          <div className="w-16 h-16 bg-secondary border border-border rounded-full mx-auto flex items-center justify-center">
+            <GitPullRequest className="h-8 w-8 text-muted-foreground" />
+          </div>
         </div>
-        <span className="text-sm text-muted-foreground hidden md:block">
-          Awaiting selection
-        </span>
-      </motion.div>
+        <h3 className="text-lg font-medium text-foreground mb-2">No Pull Requests Found</h3>
+        <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
+          Click the "Fetch PRs" button above to retrieve pull requests from the repository.
+        </p>
+        <div className="inline-flex items-center font-mono text-xs text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full">
+          <div className="w-1.5 h-1.5 bg-green-400 rounded-full mr-2"></div>
+          <span>Ready to analyze code changes</span>
+        </div>
+      </div>
+    );
+  }
 
-      {/* PR Cards */}
-      {prs.map((pr) => (
-        <motion.div
-          key={pr.id}
-          className="glass-card card-hover border-l-[6px] border-yellow-400 dark:border-yellow-300 transition-all"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-        >
-          <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            {/* Left Section */}
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold leading-snug mb-1">
-                <span className="inline-block bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded mr-2 shadow-sm">
-                  PR #{pr.number}
-                </span>
-                {pr.title}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {pr.description.slice(0, 140)}
-                {pr.description.length > 140 ? "..." : ""}
-              </p>
-
-              <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <CalendarDays className="w-4 h-4" />
-                  {pr.mergedAt
-                    ? formatDistanceToNow(new Date(pr.mergedAt)) + " ago"
-                    : "Unknown"}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  {pr.authorName}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Files className="w-4 h-4" />
-                  {pr.filesChanged} files
-                </div>
-              </div>
+  return (
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="mt-8"
+    >
+      {/* Header with GitHub-style */}
+      <div className="mb-6">
+        <div className="border-b border-border pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <h2 className="text-xl font-semibold text-foreground">
+                Pull Requests
+              </h2>
+              <span className="ml-3 px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
+                {prs.length}
+              </span>
             </div>
-
-            {/* Right Section */}
-            <div className="flex flex-col items-end gap-3 min-w-[160px]">
-              <a
-                href={pr.url}
-                target="_blank"
-                className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-              >
-                <GithubIcon className="w-4 h-4" /> View on GitHub
-              </a>
-              <Button
-                variant="default"
-                className="button-accent w-full"
-                onClick={() => onGenerateNotes(pr)}
-                disabled={isGenerating && generatingPrId === pr.id}
-              >
-                <Sparkles className="w-4 h-4 mr-1" />
-                {isGenerating && generatingPrId === pr.id
-                  ? "Generating..."
-                  : "Generate Notes"}
-              </Button>
+            <div className="text-sm text-muted-foreground font-medium hidden md:flex items-center">
+              <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+              Ready for analysis
             </div>
           </div>
-        </motion.div>
-      ))}
+        </div>
+      </div>
 
-      {/* Pagination */}
-      <div className="mt-10">
+      {/* PR Cards List with item animations */}
+      <div className="space-y-3">
+        <AnimatePresence mode="sync">
+          {prs.map((pr, index) => (
+            <PRCard
+              key={pr.id}
+              pr={pr}
+              onGenerateNotes={onGenerateNotes}
+              isGenerating={isGenerating}
+              isSelected={generatingPrId === pr.id}
+            />
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* Pagination with fetch more option */}
+      <div className="mt-8">
         <PRPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={onPageChange}
+          hasMorePages={hasMorePages}
+          onFetchMore={onFetchMore}
+          isLoading={isLoadingMore}
         />
       </div>
-    </section>
+    </motion.section>
   );
 }

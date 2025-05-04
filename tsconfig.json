@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    // ... other compilerOptions
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -13,9 +14,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": "./src",  
+    "baseUrl": "./src",  // Keep baseUrl as ./src
     "paths": {
-      "@/*": ["app/*"]   
+      "@/*": ["./*"]   // <-- CHANGE THIS LINE
     },
     "plugins": [
       {
