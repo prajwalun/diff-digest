@@ -142,6 +142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         - Use <code> tags for code snippets
         
         Return ONLY the developer notes with no introduction or explanation.
+        IMPORTANT: Do not wrap your response in HTML code block tags or any markdown fences.
       `;
       
       // Send start event
@@ -162,6 +163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ${diffContent.substring(0, 30000)}  // Limiting diff size for token constraints
               
               Generate comprehensive developer notes for this pull request using HTML formatting.
+              IMPORTANT: Do not wrap your response in HTML code block tags (like \`\`\`html) or any markdown fences.
             `
           }
         ],
@@ -169,13 +171,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       let technicalNotes = "";
+      let fullContent = "";
       
       for await (const chunk of technicalStream) {
         const content = chunk.choices[0]?.delta?.content || "";
         if (content) {
-          technicalNotes += content;
-          sendEvent({ type: "developer", content });
+          // Add to full content string to check for complete markdown fences
+          fullContent += content;
+          
+          // Check and remove any ```html or ``` tags that might be included
+          const cleanedContent = content
+            .replace(/^```html\s*/g, '')
+            .replace(/\s*```$/g, '');
+          technicalNotes += cleanedContent;
+          sendEvent({ type: "developer", content: cleanedContent });
         }
+      }
+      
+      // Clean up the complete response at the end to ensure we've removed all markdown fences
+      const finalTechnicalNotes = fullContent
+        .replace(/```html\s*/g, '') // Remove anywhere in the text, not just beginning
+        .replace(/```\s*$/g, '')    // Better handling of trailing backticks
+        .replace(/```$/g, '')       // Handle backticks at the very end with no whitespace
+        
+      if (technicalNotes !== finalTechnicalNotes) {
+        // Only update if there were actual code fences to remove
+        technicalNotes = finalTechnicalNotes;
+        // Optionally resend a clean version if needed
+        sendEvent({ type: "developer", content: finalTechnicalNotes, resend: true });
       }
       
       // Send completion event for technical notes
@@ -203,6 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         - Use <strong> tags for emphasis
         
         Return ONLY the marketing notes with no introduction or explanation.
+        IMPORTANT: Do not wrap your response in HTML code block tags or any markdown fences.
       `;
       
       // Stream marketing notes
@@ -220,17 +244,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ${technicalNotes}
               
               Generate marketing-friendly release notes that highlight the user benefits of these changes using HTML formatting.
+              IMPORTANT: Do not wrap your response in HTML code block tags (like \`\`\`html) or any markdown fences.
+              IMPORTANT: Do not include \`\`\`html at the beginning or \`\`\` at the end of your response.
             `
           }
         ],
         stream: true,
       });
       
+      let marketingFullContent = "";
+      
       for await (const chunk of marketingStream) {
         const content = chunk.choices[0]?.delta?.content || "";
         if (content) {
-          sendEvent({ type: "marketing", content });
+          // Add to full content string to check for complete markdown fences
+          marketingFullContent += content;
+          
+          // Check and remove any ```html or ``` tags that might be included
+          const cleanedContent = content
+            .replace(/^```html\s*/g, '')
+            .replace(/\s*```$/g, '');
+          sendEvent({ type: "marketing", content: cleanedContent });
         }
+      }
+      
+      // At the end, send a cleaned-up version of the full content if necessary
+      const finalMarketingContent = marketingFullContent
+        .replace(/```html\s*/g, '') // Remove anywhere in the text, not just beginning
+        .replace(/```\s*$/g, '')    // Better handling of trailing backticks
+        .replace(/```$/g, '')       // Handle backticks at the very end with no whitespace
+        
+      if (marketingFullContent !== finalMarketingContent) {
+        // Only resend if there were actual code fences to remove
+        sendEvent({ type: "marketing", content: finalMarketingContent, resend: true });
       }
       
       // Send completion event for marketing notes and final done signal

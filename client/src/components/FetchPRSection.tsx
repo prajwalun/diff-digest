@@ -92,9 +92,22 @@ export default function FetchPRSection({
     
     if (!parsedRepo) {
       toast({
-        title: "Invalid Repository Format",
-        description: "Please enter a valid GitHub repository URL or owner/repo format",
+        title: (
+          <>
+            <AlertCircle className="h-4 w-4 mr-1.5" />
+            Invalid Repository Format
+          </>
+        ),
+        description: "Please enter a valid GitHub repository URL or owner/repo format (e.g. 'facebook/react' or 'https://github.com/vercel/next.js')",
         variant: "destructive",
+        action: (
+          <div 
+            onClick={() => setRepoUrl("facebook/react")} 
+            className="py-1 px-3 rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-medium hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-800/60 cursor-pointer transition-colors duration-200"
+          >
+            Try Example
+          </div>
+        ),
       });
       return;
     }
@@ -116,22 +129,48 @@ export default function FetchPRSection({
       
       if (prs.length === 0) {
         toast({
-          title: "No Pull Requests Found",
+          title: (
+            <>
+              <AlertCircle className="h-4 w-4 mr-1.5" />
+              No Pull Requests Found
+            </>
+          ),
           description: "The repository exists but has no merged pull requests.",
+          variant: "warning",
         });
       } else {
         toast({
-          title: "Pull Requests Loaded",
+          title: (
+            <>
+              <GitMerge className="h-4 w-4 mr-1.5" />
+              Pull Requests Loaded
+            </>
+          ),
           description: `Found ${prs.length} merged PRs from ${parsedRepo.owner}/${parsedRepo.repo}`,
+          variant: "success",
         });
       }
     } catch (error) {
       console.error("Error fetching PRs:", error);
       setError(error instanceof Error ? error.message : "Unknown error occurred");
       toast({
-        title: "Error Fetching PRs",
+        title: (
+          <>
+            <AlertCircle className="h-4 w-4 mr-1.5" />
+            Error Fetching PRs
+          </>
+        ),
         description: error instanceof Error ? error.message : "Unknown error occurred",
         variant: "destructive",
+        action: (
+          <div 
+            onClick={() => handleFetchPRs()} 
+            className="py-1 px-3 rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-medium hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-800/60 cursor-pointer transition-colors duration-200 flex items-center"
+          >
+            <RefreshCw className="h-3 w-3 mr-1.5" />
+            Retry
+          </div>
+        ),
       });
       setPRs([]);
     } finally {
