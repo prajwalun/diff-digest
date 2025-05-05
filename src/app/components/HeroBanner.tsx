@@ -1,19 +1,19 @@
-// components/HeroBanner.tsx
 "use client";
 
 import { motion } from "framer-motion";
-import { 
-  GitPullRequest, Code, FileText, Zap, ArrowRight, 
-  Sparkles, MessageSquareCode, Github, CheckCircle 
+import {
+  GitPullRequest, Zap, Code, FileText, ArrowRight, 
+  MessageSquareCode, CheckCircle, Sparkles, 
+  Info, Lightbulb
 } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface HeroBannerProps {
-  onFetch: () => void;
+  onGetStarted: () => void;
   isLoading: boolean;
 }
 
-export function HeroBanner({ onFetch, isLoading }: HeroBannerProps) {
+export function HeroBanner({ onGetStarted, isLoading }: HeroBannerProps) {
   // Animation variants for staggered animations
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -102,7 +102,7 @@ export function HeroBanner({ onFetch, isLoading }: HeroBannerProps) {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
             <Button 
-              onClick={onFetch}
+              onClick={onGetStarted}
               disabled={isLoading}
               size="lg"
               className="gradient-blue-bg text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-8 py-6 h-auto font-semibold text-base group"
@@ -135,15 +135,20 @@ export function HeroBanner({ onFetch, isLoading }: HeroBannerProps) {
               )}
             </Button>
             
-            <a 
-              href="https://github.com/prajwalun/diff-digest"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-card inline-flex items-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 px-6 py-3 rounded-lg font-medium transition-all text-sm shadow-md hover:shadow-lg"
+            <Button
+              variant="outline"
+              size="lg"
+              className="glass-card text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 px-6 py-3 h-auto rounded-lg font-medium transition-all text-sm shadow-md hover:shadow-lg"
+              onClick={() => {
+                const howItWorksSection = document.getElementById('how-it-works');
+                if (howItWorksSection) {
+                  howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
-              <Github className="h-5 w-5 mr-2.5 text-gray-500 dark:text-gray-400" />
-              <span>View on GitHub</span>
-            </a>
+              <Info className="h-5 w-5 mr-2.5 text-gray-500 dark:text-gray-400" />
+              <span>How It Works</span>
+            </Button>
           </motion.div>
           
           {/* Feature cards with enhanced design */}
@@ -232,6 +237,67 @@ export function HeroBanner({ onFetch, isLoading }: HeroBannerProps) {
               </div>
             </motion.div>
           </div>
+          
+          {/* How it works section (new) */}
+          <motion.div 
+            variants={itemVariants}
+            id="how-it-works"
+            className="mt-20 max-w-3xl mx-auto"
+          >
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center justify-center p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 mb-4">
+                <Lightbulb className="h-6 w-6" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">How It Works</h2>
+              <p className="text-gray-700 dark:text-gray-300">
+                Generate comprehensive release notes in three simple steps
+              </p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="flex gap-4 items-start">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">1</div>
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">Enter GitHub Repository</h3>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Input any public GitHub repository to fetch its merged pull requests
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-4 items-start">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">2</div>
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">Select a Pull Request</h3>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Browse through merged PRs and choose one to analyze
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-4 items-start">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">3</div>
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">Generate Notes</h3>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Our AI analyzes the code changes and generates both technical and marketing-friendly release notes
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-12 flex justify-center">
+              <Button
+                onClick={onGetStarted}
+                size="lg"
+                className="gradient-blue-bg text-white px-6 py-6 h-auto text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <GitPullRequest className="h-5 w-5 mr-2" />
+                <span>Analyze a Repository</span>
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </Button>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>

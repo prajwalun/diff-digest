@@ -1,4 +1,3 @@
-// components/FetchPRsSection.tsx
 "use client";
 
 import * as React from "react";
@@ -61,7 +60,7 @@ export function FetchPRsSection({
     : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600";
 
   return (
-    <section className="mt-6 mb-10">
+    <section className="mt-6 mb-10 fetch-pr-section">
       <div className="max-w-3xl mx-auto px-4">
         {!hasPRs && (
           <motion.div 
