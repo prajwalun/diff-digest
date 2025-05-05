@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-/* Import the HTML content styles */
 @import './styles/html-content.css';
-/* Import theme variables */
 @import './styles/theme-variables.css';
 
 @tailwind base;

@@ -40,6 +40,7 @@ Diff Digest helps development teams transform pull request information into comp
 ## 🏗️ Architecture
 
 The application is built as a modern web app with:
+
 - React frontend with custom hooks and context providers
 - Express.js backend for API requests and OpenAI integration
 - GitHub API integration for repository data
@@ -56,22 +57,26 @@ The application is built as a modern web app with:
 ### Installation
 
 1. Clone the repository
+
    ```bash
    git clone https://github.com/prajwalun/diff-digest.git
    cd diff-digest
    ```
 
 2. Install dependencies
+
    ```bash
    npm install
    ```
 
 3. Create a `.env` file with your OpenAI API key
+
    ```
    OPENAI_API_KEY=your_api_key_here
    ```
 
 4. Start the development server
+
    ```bash
    npm run dev
    ```
@@ -98,6 +103,7 @@ The application features a sophisticated notification system that provides conte
 - **Interactive buttons**: Context-aware action buttons that help users recover from errors or take suggested actions
 
 These notifications are designed to be non-intrusive while providing maximum value through:
+
 - Clear iconography that signals the nature of the message
 - Concise but informative text content
 - Interactive elements that provide immediate paths to resolution
@@ -136,3 +142,5 @@ Project Link: [https://github.com/prajwalun/diff-digest](https://github.com/praj
 <div align="center">
   <p>Built with ❤️ by the Diff Digest team</p>
 </div>
+
+# UI Inspiration from Replit, ChatGPT, Gemini

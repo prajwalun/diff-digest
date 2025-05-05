@@ -48,11 +48,12 @@ function HtmlContent({ html, type }: { html: string; type: 'developer' | 'market
 interface SimpleNotesDisplayProps {
   selectedPR: PR | null;
   notes: NotesData;
-  setNotes: (notes: NotesData) => void;
+  setNotes: React.Dispatch<React.SetStateAction<NotesData>>; // ✅ updated line
   isGeneratingNotes: boolean;
   setIsGeneratingNotes: (isGenerating: boolean) => void;
   setError: (error: string | null) => void;
 }
+
 
 export default function SimpleNotesDisplay({
   selectedPR,

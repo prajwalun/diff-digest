@@ -1,9 +1,4 @@
 import axios from 'axios';
-
-/**
- * GitHub API helper for fetching related information about PRs, issues, and contributors
- */
-
 // Helper to set authorization if GitHub token is available
 const getHeaders = () => {
   const headers: Record<string, string> = {
