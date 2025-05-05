@@ -24,6 +24,16 @@ export interface PR {
   closed_at: string | null;
   user: User;
   diff_url: string;
+  html_url?: string;
+  diff_content?: string;
+  _links?: {
+    html?: {
+      href: string;
+    };
+    self?: {
+      href: string;
+    };
+  };
   base: {
     repo: Repo;
   };

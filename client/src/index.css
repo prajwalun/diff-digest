@@ -1,0 +1,400 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* GitHub-inspired Light Theme */
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 47.4% 11.2%;
+  
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  
+  /* GitHub style - Yellow accent */
+  --primary: 35 91% 61%; /* Improved GitHub yellow */
+  --primary-foreground: 210 40% 98%;
+  
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  
+  /* GitHub purple accent */
+  --accent: 261 83% 58%;
+  --accent-foreground: 210 40% 98%;
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --ring: 215 20.2% 65.1%;
+  --radius: 0.5rem;
+
+  /* GitHub-inspired custom color palette */
+  --highlight-purple: 261 83% 58%; /* GitHub purple */
+  --highlight-blue: 212 100% 50%;  /* GitHub blue */
+  --highlight-green: 140 69% 49%;  /* GitHub green */
+  --highlight-yellow: 35 91% 61%;  /* GitHub yellow */
+  --highlight-red: 355 100% 64%;   /* GitHub red */
+  --highlight-orange: 22 100% 60%; /* GitHub orange */
+  
+  /* Background modifier colors */
+  --success-bg: 140 69% 96%;
+  --success-fg: 140 69% 29%;
+  --warning-bg: 35 91% 96%;
+  --warning-fg: 35 91% 41%;
+  --error-bg: 355 100% 97%;
+  --error-fg: 355 100% 54%;
+  --info-bg: 212 100% 97%;
+  --info-fg: 212 100% 40%;
+  
+  --glassmorphism: rgba(255, 255, 255, 0.8);
+}
+
+.dark {
+  /* GitHub Dark Mode Theme */
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  
+  --muted: 223 47% 11%;
+  --muted-foreground: 215.4 16.3% 65.1%;
+  
+  --popover: 224 71% 4%;
+  --popover-foreground: 215 20.2% 91%;
+  
+  --card: 224 71% 4%;
+  --card-foreground: 213 31% 91%;
+  
+  --border: 215.4 33.9% 17.5%;
+  --input: 215.4 33.9% 17.5%;
+  
+  /* GitHub style - Yellow in dark mode */
+  --primary: 33 93% 66%;
+  --primary-foreground: 210 40% 10%;
+  
+  --secondary: 222.2 47.4% 11.2%;
+  --secondary-foreground: 210 40% 98%;
+  
+  /* GitHub dark mode purple */
+  --accent: 259 89% 75%;
+  --accent-foreground: 224 71% 4%;
+  
+  --destructive: 0 63% 57%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --ring: 216.4 33.9% 25.5%;
+  
+  /* GitHub-inspired custom color palette for dark mode */
+  --highlight-purple: 259 89% 75%;  /* GitHub purple dark */
+  --highlight-blue: 212 100% 70%;   /* GitHub blue dark */
+  --highlight-green: 140 69% 70%;   /* GitHub green dark */
+  --highlight-yellow: 33 93% 66%;   /* GitHub yellow dark */
+  --highlight-red: 355 100% 72%;    /* GitHub red dark */
+  --highlight-orange: 22 100% 70%;  /* GitHub orange dark */
+  
+  /* Background modifier colors for dark mode */
+  --success-bg: 140 69% 13%;
+  --success-fg: 140 69% 65%;
+  --warning-bg: 33 93% 12%;
+  --warning-fg: 33 93% 66%;
+  --error-bg: 355 100% 13%;
+  --error-fg: 355 100% 72%;
+  --info-bg: 212 100% 13%;
+  --info-fg: 212 100% 70%;
+  
+  --glassmorphism: rgba(13, 17, 23, 0.75);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Modern scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full transition-colors;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  /* GitHub-style Glass effect card */
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-border/50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .dark .glass-card {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .glass-card:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    border-color: hsl(var(--border));
+  }
+  
+  .dark .glass-card:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  }
+  
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -10%;
+    width: 120%;
+    height: 100%;
+    background: linear-gradient(
+      90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.08), 
+      transparent
+    );
+    transform: skewX(-15deg);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .glass-card:hover::before {
+    opacity: 1;
+  }
+  
+  /* GitHub-style card with accent border */
+  .accent-card {
+    @apply glass-card border-l-4 border-l-highlight-blue;
+  }
+  
+  .accent-card.accent-purple {
+    @apply border-l-highlight-purple;
+  }
+  
+  .accent-card.accent-green {
+    @apply border-l-highlight-green;
+  }
+  
+  .accent-card.accent-yellow {
+    @apply border-l-highlight-yellow;
+  }
+  
+  .accent-card.accent-red {
+    @apply border-l-highlight-red;
+  }
+  
+  .accent-card.accent-orange {
+    @apply border-l-highlight-orange;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-highlight-purple to-highlight-blue;
+  }
+
+  /* Pill badge */
+  .pill-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  /* GitHub-style primary button */
+  .yellow-button {
+    @apply bg-primary text-black font-medium hover:bg-primary/90 transition-all duration-200;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  
+  .dark .yellow-button {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .yellow-button:active {
+    transform: translateY(1px);
+  }
+  
+  .yellow-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .yellow-button:hover::after {
+    opacity: 1;
+  }
+  
+  /* GitHub-style secondary button */
+  .github-btn {
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium 
+           hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200
+           border border-gray-300 dark:border-gray-600;
+    position: relative;
+    box-shadow: 0 1px 0 rgba(0,0,0,.06);
+  }
+  
+  .github-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Subtle border hover effect */
+  .hover-border {
+    @apply border border-transparent hover:border-primary/50 transition-all duration-200;
+  }
+  
+  /* Animated gradient background */
+  .gradient-bg {
+    background: linear-gradient(-45deg, hsl(var(--highlight-purple)), hsl(var(--highlight-blue)), hsl(var(--highlight-green)), hsl(var(--highlight-yellow)));
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    position: relative;
+  }
+  
+  /* Subtle gradient background for section headers */
+  .subtle-gradient {
+    background: linear-gradient(to right, hsl(var(--highlight-yellow)/0.1), transparent);
+    position: relative;
+  }
+  
+  /* Bottom light effect for glass cards */
+  .glass-bottom-light {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .glass-bottom-light::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 10%;
+    width: 80%;
+    height: 100px;
+    background: radial-gradient(ellipse at center, hsl(var(--highlight-purple)/0.3) 0%, transparent 70%);
+    filter: blur(20px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  /* Cool card hover effect */
+  .hover-card {
+    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+  }
+  
+  /* Custom section container with nice spacing */
+  .section-container {
+    @apply max-w-5xl mx-auto px-4 py-8 sm:px-6 md:py-12 lg:py-16;
+  }
+  
+  /* Modern input with subtle styling */
+  .modern-input {
+    @apply rounded-lg border-input bg-transparent px-3 py-2 text-sm 
+    ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none 
+    focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Cool animations */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Removing the animation that's causing buttons to slide */
+.animate-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  /* Removing the problematic animation */
+  /* animation: shine 3s infinite; */
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
