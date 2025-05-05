@@ -1,8 +1,9 @@
+// Copy to src/app/components/ui/tabs.tsx
 "use client";
 
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { cn } from "../../../lib/utils"; // Assuming cn helper is correctly imported
+import { cn } from "../../../lib/utils"; // Adjust the import path
 
 // Root component (No changes needed here)
 const Tabs = TabsPrimitive.Root;

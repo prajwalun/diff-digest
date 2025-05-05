@@ -1,9 +1,11 @@
+// Copy to src/app/components/ui/copy-button.tsx
 "use client";
+
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react"; // Import useEffect
-import { Check, Copy } from "lucide-react"; // Assuming lucide-react installed
-import { Button } from "./button"; // Ensure this imports your updated button component
-import { cn } from "../../../lib/utils"; // Assuming cn helper is correctly imported
+import { useState, useEffect } from "react"; 
+import { Check, Copy } from "lucide-react"; 
+import { Button } from "./button"; 
+import { cn } from "../../../lib/utils"; // Adjust the import path
 
 interface CopyButtonProps {
   text: string;
@@ -57,31 +59,31 @@ export function CopyButton({ text, className }: CopyButtonProps) {
       disabled={!text} // Disable if no text to copy
     >
       {/* Icon change based on copied state */}
-      {copied ? (
-        <motion.div
-          key="check" // Key for Framer Motion animation
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.15 }}
-          className="flex items-center justify-center" // Ensure icon is centered
-        >
-           <Check className="h-4 w-4" /> {/* Check icon */}
-        </motion.div>
-      ) : (
-         <motion.div
-          key="copy" // Key for Framer Motion animation
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.15 }}
-           className="flex items-center justify-center" // Ensure icon is centered
-        >
-          <Copy className="h-4 w-4" /> {/* Copy icon */}
-         </motion.div>
-      )}
-       {/* Optional: Show text on hover */}
-       {/* <span className="hidden group-hover:inline ml-1 text-xs">Copy</span> */}
+      <AnimatePresence mode="wait">
+        {copied ? (
+          <motion.div
+            key="check" // Key for Framer Motion animation
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.15 }}
+            className="flex items-center justify-center" // Ensure icon is centered
+          >
+            <Check className="h-4 w-4" /> {/* Check icon */}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="copy" // Key for Framer Motion animation
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.15 }}
+            className="flex items-center justify-center" // Ensure icon is centered
+          >
+            <Copy className="h-4 w-4" /> {/* Copy icon */}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Button>
   );
 }

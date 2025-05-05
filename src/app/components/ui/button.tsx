@@ -1,5 +1,8 @@
+// Copy to src/app/components/ui/button.tsx
+"use client";
+
 import * as React from "react";
-import { cn } from "../../../lib/utils"; // Assuming cn helper is correctly imported
+import { cn } from "../../../lib/utils"; // Adjust the import path
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   // Added 'accent' variant for primary actions

@@ -1,18 +1,56 @@
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Custom variables and base styles */
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 210 12% 16%;
-    /* ... more variables ... */
+    --muted: 210 18% 96%;
+    --muted-foreground: 215 16% 56%;
+    
+    --primary: 210 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 210 14% 94%;
+    --secondary-foreground: 210 24% 16%;
+    
+    --accent: 210 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    
+    --border: 214 32% 91%;
+    --ring: 210 100% 52%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 210 24% 16%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
   }
 
   .dark {
     --background: 215 21% 11%;
     --foreground: 210 40% 98%;
-    /* ... more dark theme variables ... */
+    --muted: 210 30% 21%;
+    --muted-foreground: 210 20% 70%;
+    
+    --primary: 210 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 210 26% 18%;
+    --secondary-foreground: 210 40% 98%;
+    
+    --accent: 210 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    
+    --border: 216 34% 19%;
+    --ring: 210 100% 52%;
+    
+    --card: 215 21% 11%;
+    --card-foreground: 210 40% 98%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
   }
 
   * {
@@ -21,6 +59,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
@@ -30,7 +69,7 @@
 }
 
 .gh-btn-primary {
-  @apply bg-[#2da44e] text-white hover:bg-[#2c974b] border border-[#1b1f2426] shadow-sm;
+  @apply bg-blue-600 text-white hover:bg-blue-700 border border-gray-200/20 shadow-sm;
 }
 
 .gh-toast {

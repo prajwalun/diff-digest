@@ -1,0 +1,302 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0f1a;
+  
+  --card: #ffffff;
+  --card-foreground: #0a0f1a;
+  
+  --popover: #ffffff;
+  --popover-foreground: #0a0f1a;
+  
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0a0f1a;
+  
+  --muted: #f8fafc;
+  --muted-foreground: #475569;
+  
+  --accent: #f1f5f9;
+  --accent-foreground: #0a0f1a;
+  
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;
+  
+  --radius: 0.5rem;
+
+  /* Custom colors */
+  --accent-blue: #2563eb;
+  --accent-blue-hover: #1d4ed8;
+  --accent-blue-light: #dbeafe;
+  --accent-blue-20: rgba(37, 99, 235, 0.2); /* Added alpha color variables */
+  --accent-blue-30: rgba(37, 99, 235, 0.3);
+  --accent-purple: #7c3aed;
+  --accent-purple-light: #ede9fe;
+  --accent-green: #10b981;
+  --accent-green-light: #d1fae5;
+  --text-heading: #0f172a;
+  --text-body: #1e293b;
+  --text-muted: #64748b;
+  --surface-1: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #f1f5f9;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
+  
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  
+  --muted: #0f172a;
+  --muted-foreground: #94a3b8;
+  
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  
+  --border: #334155;
+  --input: #334155;
+  --ring: #3b82f6;
+
+  /* Custom colors */
+  --accent-blue: #3b82f6;
+  --accent-blue-hover: #2563eb;
+  --accent-blue-light: #1e3a8a;
+  --accent-blue-20: rgba(59, 130, 246, 0.2); /* Added alpha color variables */
+  --accent-blue-30: rgba(59, 130, 246, 0.3);
+  --accent-purple: #8b5cf6;
+  --accent-purple-light: #4c1d95;
+  --accent-green: #10b981;
+  --accent-green-light: #064e3b;
+  --text-heading: #f8fafc;
+  --text-body: #e2e8f0;
+  --text-muted: #94a3b8;
+  --surface-1: #0f172a;
+  --surface-2: #1e293b;
+  --surface-3: #334155;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+/* Base styles */
+body {
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-text-heading font-semibold tracking-tight;
+  }
+  p {
+    @apply text-text-body leading-relaxed;
+  }
+  a {
+    @apply transition-colors duration-200;
+  }
+  code {
+    @apply font-mono text-sm bg-surface-2 dark:bg-surface-3 px-1.5 py-0.5 rounded border border-border;
+  }
+  
+  /* Improved text selection - fixed to use defined color variables */
+  ::selection {
+    @apply bg-[color:var(--accent-blue-20)] text-text-heading;
+  }
+  
+  .dark ::selection {
+    @apply bg-[color:var(--accent-blue-30)] text-text-heading;
+  }
+}
+
+/* Custom components */
+@layer components {
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/70 dark:border-gray-700/70;
+  }
+  
+  .frosted-glass {
+    @apply backdrop-blur-sm bg-white/80 dark:bg-gray-800/80;
+  }
+  
+  .subtle-border {
+    @apply border border-gray-200/70 dark:border-gray-700/70;
+  }
+  
+  .gradient-blue-bg {
+    @apply bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-600 dark:to-blue-700;
+  }
+  
+  .gradient-purple-bg {
+    @apply bg-gradient-to-r from-purple-600 to-purple-500 dark:from-purple-600 dark:to-purple-700;
+  }
+  
+  .gradient-text-blue {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-400 dark:to-blue-300;
+  }
+  
+  .gradient-text-purple {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-500 dark:from-purple-400 dark:to-purple-300;
+  }
+  
+  /* Additional component classes for Diff Digest app */
+  .gradient-text-blue-purple {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--accent-blue)] to-[color:var(--accent-purple)];
+  }
+  
+  .pill-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[color:var(--accent-blue-light)] text-[color:var(--accent-blue)] dark:bg-[color:var(--accent-blue-light)] dark:text-white;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  .typewriter-cursor {
+    @apply inline-block w-[2px] h-4 ml-0.5 bg-[color:var(--accent-blue)] animate-blink;
+  }
+  
+  .notes-container {
+    @apply rounded-lg border border-border bg-card p-4 shadow-sm;
+  }
+}
+
+/* Grid patterns for background styling */
+.bg-grid-gray-200 {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(209, 213, 219, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(209, 213, 219, 0.1) 1px, transparent 1px);
+}
+
+.bg-grid-gray-700 {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(55, 65, 81, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(55, 65, 81, 0.1) 1px, transparent 1px);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+  border: 3px solid var(--background);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Additional animation for typewriter cursor */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Toast styling enhancements */
+.sonner-toast {
+  @apply shadow-lg border border-gray-200 dark:border-gray-700;
+}
+
+.dark .sonner-toast {
+  @apply bg-gray-800 text-white;
+}
+
+/* Card hover effects */
+.card-hover-effect {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  border-color: var(--ring);
+}
+
+/* Enhanced focus styles */
+.enhanced-focus:focus-visible {
+  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 dark:from-blue-400 dark:to-blue-200;
+}
+
+/* Optimized scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

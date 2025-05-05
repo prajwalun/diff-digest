@@ -1,7 +1,9 @@
-import * as React from "react";
-import { cn } from "../../../lib/utils"; // Assuming cn helper is correctly imported
+// Copy to src/app/components/ui/badge.tsx
+"use client";
 
-// Define new variant types
+import * as React from "react";
+import { cn } from "../../../lib/utils"; // Adjust the import path
+
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: "default" | "outline" | "accent" | "secondary"; // Added 'accent' and 'secondary'
 }
