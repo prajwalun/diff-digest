@@ -2,8 +2,9 @@ import { useState } from "react";
 import AppHeader from "@/components/AppHeader";
 import FetchPRSection from "@/components/FetchPRSection";
 import PRList from "@/components/PRList";
-import GeneratedNotes from "@/components/GeneratedNotes";
+import SimpleNotesDisplay from "@/components/SimpleNotesDisplay";
 import { PR, NotesData } from "@/lib/types";
+import { PaginationResult } from "@/lib/github";
 
 export default function Home() {
   const [repoInfo, setRepoInfo] = useState<{ owner: string; repo: string } | null>(null);
@@ -11,8 +12,19 @@ export default function Home() {
   const [selectedPR, setSelectedPR] = useState<PR | null>(null);
   const [isLoadingPRs, setIsLoadingPRs] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notes, setNotes] = useState<NotesData>({ developer: "", marketing: "" });
+  const [notes, setNotes] = useState<NotesData>({ 
+    developer: "", 
+    marketing: "",
+    enrichmentStatus: {
+      inProgress: false,
+      message: ""
+    }
+  });
   const [isGeneratingNotes, setIsGeneratingNotes] = useState(false);
+  
+  // Pagination state
+  const [pagination, setPagination] = useState<PaginationResult | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -88,6 +100,9 @@ export default function Home() {
           setIsLoadingPRs={setIsLoadingPRs}
           isLoadingPRs={isLoadingPRs}
           setError={setError}
+          setPagination={setPagination}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
         />
 
         {/* Pull Request List Section */}
@@ -97,12 +112,20 @@ export default function Home() {
             selectedPR={selectedPR}
             setSelectedPR={setSelectedPR}
             isLoading={isLoadingPRs}
+            pagination={pagination || undefined}
+            onPageChange={(page) => {
+              if (repoInfo) {
+                // This will trigger the page change in the FetchPRSection component
+                setCurrentPage(page);
+              }
+            }}
+            currentRepo={repoInfo}
           />
         )}
 
         {/* Generated Notes Section */}
         {error ? null : (
-          <GeneratedNotes
+          <SimpleNotesDisplay
             selectedPR={selectedPR}
             notes={notes}
             setNotes={setNotes}

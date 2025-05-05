@@ -1,148 +1,138 @@
-# a0.dev – Take-Home Interview: Diff Digest
+# Diff Digest
 
-**Challenge:** Build a web experience that turns Git diffs into live, dual-tone release notes.  
-**Time-box:** 24 hours from when you received the email
+<div align="center">
 
----
+![Diff Digest Logo](generated-icon.png)
 
-## 1 · Background
+**AI-powered GitHub Pull Request analysis and release note generation**
 
-a0.dev ships AI-generated React Native apps at lightning speed.  
-We lean on LLMs, streaming APIs, and polished UIs.  
-This exercise lets you show how you design prompts, pipeline data, and craft front-end experiences.
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-Latest-purple.svg)](https://vitejs.dev/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-green.svg)](https://openai.com/)
 
----
+</div>
 
-## 2 · Current State
+## 🚀 Features
 
-- **API Endpoint:** `GET /api/sample-diffs`
+- **Intelligent PR Analysis**: Extract insights from GitHub Pull Request diffs using OpenAI's GPT-4
+- **Developer Notes**: Generate technical documentation for engineering teams
+- **Marketing Summaries**: Create non-technical release notes for customer-facing teams
+- **GitHub Integration**: Easily connect to any public GitHub repository
+- **Modern UI**: Responsive design with light and dark mode support
 
-  - Fetches merged pull request diffs directly from a specified GitHub repository.
-  - Uses the GitHub API via `@octokit/rest`.
-  - Supports pagination and repository selection via query parameters.
-  - **Defaults:** `owner=openai`, `repo=openai-node`, `per_page=10`
-  - **Query Parameters:**
-    - `owner` (string, optional): GitHub repository owner.
-    - `repo` (string, optional): GitHub repository name.
-    - `page` (number, optional): Page number for pagination (default: 1).
-    - `per_page` (number, optional): Number of items per page (default: 10).
-  - **Response Format (Success):**
-    ```json
-    {
-      "diffs": [
-        {
-          "id": "<pr_number>",
-          "description": "<pr_title>",
-          "diff": "<diff_content>",
-          "url": "<pr_html_url>"
-        },
-        // ... more diffs
-      ],
-      "nextPage": <number | null>,
-      "currentPage": <number>,
-      "perPage": <number>
-    }
-    ```
-  - **Response Format (Error):**
-    ```json
-    {
-      "error": "<error_message>",
-      "details": "<optional_details>"
-    }
-    ```
+## 📋 Overview
 
-- **Frontend:**
+Diff Digest helps development teams transform pull request information into comprehensive documentation suitable for both developers and non-technical stakeholders. By analyzing PR diffs, commits, and descriptions, Diff Digest generates:
 
-  - A basic Next.js page (`src/app/page.tsx`) is set up to fetch and display the list of merged pull requests from the API.
-  - Uses Client Components and `useState` for managing state.
-  - Includes basic loading, error handling, and pagination ("Load More" button).
+1. **Technical Notes** - Detailed explanations of code changes, architectural decisions, and implementation details
+2. **Marketing Summaries** - User-friendly explanations of new features and improvements suitable for release notes
 
-- **Starter repo:** Next 15 Edge runtime, TypeScript, OpenAI SDK, ESLint, Tailwind CSS, `@octokit/rest`.
+## 🛠️ Technology Stack
 
----
+- **Frontend**: React, TypeScript, TailwindCSS, Framer Motion
+- **Backend**: Express.js, Node.js
+- **AI**: OpenAI GPT-4 API
+- **Third-party APIs**: GitHub API
+- **Build Tools**: Vite, ESBuild
+- **UI Components**: Radix UI, Lucide icons
 
-## 3 · Your task
+## 🏗️ Architecture
 
-1.  **(Partially Done)** **Fetch merged PR diffs** from `/api/sample-diffs` (the frontend currently fetches and lists PRs, but doesn't use the diff content yet).
-2.  **Send the relevant PR's** to an LLM and stream back _developer_ and _marketing_ release-note sentences.
+The application is built as a modern web app with:
+- React frontend with custom hooks and context providers
+- Express.js backend for API requests and OpenAI integration
+- GitHub API integration for repository data
+- Real-time updates with streaming responses from OpenAI
 
-    - **Developer notes:** Should be concise, technical, and focus on the _what_ and _why_ of the change (e.g., "Refactored `useFetchDiffs` hook to use `useSWR` for improved caching and reduced re-renders.").
-    - **Marketing notes:** Should be user-centric, highlight the _benefit_ of the change, and use simpler language (e.g., "Loading pull requests is now faster and smoother thanks to improved data fetching!").
+## 🌟 Getting Started
 
-3.  **Render a UI** that updates live as chunks arrive, showing the generated release notes for the selected PR(s).
-4.  **Handle edge cases** (loading, network failure, malformed JSON, API errors) gracefully.
+### Prerequisites
 
-You are free to decide:
+- Node.js 18+ and npm
+- OpenAI API key
+- GitHub token (optional, increases rate limits)
 
-- How and which PR(s) to generate notes for.
-- How to display the streaming results.
-- SSE vs. WebSocket for streaming.
-- Any additional component library or CSS approach.
+### Installation
 
-High agency and thoughtful trade-offs are what we're looking for. Specifically, we're interested in seeing:
+1. Clone the repository
+   ```bash
+   git clone https://github.com/prajwalun/diff-digest.git
+   cd diff-digest
+   ```
 
-- **Prompt Engineering:** How effectively you instruct the LLM to generate the desired dual-tone notes from the provided diff context.
-- **Streaming Handling:** Your approach to managing and displaying the streaming data smoothly in the UI.
-- **LLM Robustness:** How you handle potential LLM quirks like hallucinations, inconsistencies, or refusals.
-- **API Integration:** Clean and efficient integration with both the diffs API and the LLM API.
-- **Code Quality & Structure:** Well-organized, readable, and maintainable code.
-- **UI/UX:** A clear and intuitive user interface for selecting PRs and viewing the generated notes.
+2. Install dependencies
+   ```bash
+   npm install
+   ```
 
----
+3. Create a `.env` file with your OpenAI API key
+   ```
+   OPENAI_API_KEY=your_api_key_here
+   ```
 
-## 4 · Stretch – optional bonus
+4. Start the development server
+   ```bash
+   npm run dev
+   ```
 
-- Implement **tool-calling** to enrich the stream (e.g., summarize related issues, identify key contributors).
-- Implement **state persistence/synchronization** so that refreshing the page doesn't lose generated notes or interrupt the stream's progress.
+5. Open your browser and navigate to `http://localhost:5000`
 
-## 5 · Quick start
+## 🔧 Usage
 
-```bash
-npm install                # or pnpm / yarn
-npm run dev                # open http://localhost:3000
-```
+1. Enter a GitHub repository URL or owner/repo in the format `owner/repo`
+2. Browse the list of recent pull requests
+3. Select a pull request to analyze
+4. View the generated developer notes and marketing summaries
+5. Copy the notes for use in documentation, release notes, or communication
 
----
+## 📸 UI Features
 
-## 6 · Environment Variables (Optional)
+### Enhanced Notification System
 
-- `GITHUB_TOKEN`: A GitHub personal access token can be provided to increase API rate limits when fetching diffs.
-- `GITHUB_OWNER`: Override the default repository owner (`openai`).
-- `GITHUB_REPO`: Override the default repository name (`openai-node`).
-- `OPENAI_API_KEY`: Your OpenAI API key for generating release notes.
+The application features a sophisticated notification system that provides contextual feedback:
 
-Create a `.env.local` file in the root directory:
+- **Error notifications**: Red-themed alerts with retry buttons
+- **Warning notifications**: Orange-themed alerts for potential issues
+- **Success notifications**: Green-themed confirmations for completed actions
+- **Interactive buttons**: Context-aware action buttons that help users recover from errors or take suggested actions
 
-```
-GITHUB_TOKEN=your_github_token_here
-GITHUB_OWNER=your_preferred_owner
-GITHUB_REPO=your_preferred_repo
-OPENAI_API_KEY=your_openai_api_key
-```
+These notifications are designed to be non-intrusive while providing maximum value through:
+- Clear iconography that signals the nature of the message
+- Concise but informative text content
+- Interactive elements that provide immediate paths to resolution
+- Consistent styling that respects the user's selected theme (dark or light mode)
 
-**Alternatively, you can use the provided free API key for this take-home assignment:**
+## ✨ Advanced Features
 
-```
-You can find the OpenAI key @ https://api.a0.dev/test-key
-```
+- **Recent Searches**: Quick access to your previously viewed repositories
+- **Popular Repositories**: One-click access to popular GitHub projects
+- **Custom Styling**: Theme support with light and dark modes
+- **Enhanced Notifications**: Color-coded toast messages with interactive action buttons (see UI Features section)
+- **Animation Effects**: Subtle UI animations for improved user experience
+- **Responsive Design**: Optimized layout for desktop, tablet, and mobile devices
+- **GitHub Integration**: Connect with any public repository for PR analysis
 
-**Available Models for the free key:** `gpt-4.1-mini`, `gpt-4.1-nano`, `gpt-4o-mini`, `o1-mini`, `o3-mini`, and `o4-mini`.
+## 🤝 Contributing
 
-You can still use your own OpenAI API key if you prefer.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
----
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 7 · Submission
+## 📝 License
 
-- Upload the completed project to github and submit the Github Repo URL and live deployment URL to careers@a0.dev.
-- Submit by the 24-hour mark; avoid force-push after deadline.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 📬 Contact
+
+Project Link: [https://github.com/prajwalun/diff-digest](https://github.com/prajwalun/diff-digest)
 
 ---
 
-## 8 · Ground rules
-
-- Any AI tools & libraries allowed—cite non-trivial code.
-- Keep secrets out of git (use `.env.local` for tokens).
-
-**Have fun!**  
-We can't wait to see how you prompt, stream, and ship 🚀
+<div align="center">
+  <p>Built with ❤️ by the Diff Digest team</p>
+</div>

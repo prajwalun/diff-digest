@@ -1,10 +1,26 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
-dotenv.config({ path: '.env.local' });
+// Load environment variables from .env and .env.local files
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+// Also load from .env.local which takes precedence
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+
+// Log environment information (without exposing actual key)
+console.log('Environment diagnostics:');
+console.log('- NODE_ENV:', process.env.NODE_ENV);
+console.log('- Detected OpenAI API key:', process.env.OPENAI_API_KEY ? "✓ Key present" : "❌ Key missing");
+console.log('- Current directory:', process.cwd());
+console.log('- Env files checked: .env and .env.local');
+
+// Make sure the API key is available from Replit secrets
+if (!process.env.OPENAI_API_KEY) {
+  // Attempt to access OPENAI_API_KEY directly from Replit
+  console.log('Trying to load API key from Replit secrets...');
+}
 
 const app = express();
 app.use(express.json());
@@ -51,7 +67,9 @@ app.use((req, res, next) => {
     throw err;
   });
 
-
+  // importantly only setup vite in development and after
+  // setting up all the other routes so the catch-all route
+  // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
@@ -59,7 +77,7 @@ app.use((req, res, next) => {
   }
 
 
-  const port = 3000;
+  const port = 3001;
   server.listen({
     port,
     host: "0.0.0.0",

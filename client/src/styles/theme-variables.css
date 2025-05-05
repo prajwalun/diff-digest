@@ -1,0 +1,64 @@
+/**
+ * Theme Variables
+ * This file contains CSS variables for light and dark themes
+ */
+
+/* Base application theme variables */
+:root {
+  /* These are inherited from tailwind.config.js and index.css */
+  /* Used as references for component-specific colors */
+  
+  /* App-specific color mappings */
+  --page-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.1);
+  
+  /* Code display */
+  --code-bg: rgba(0, 0, 0, 0.05);
+  --code-fg: #24292f;
+  --code-border: rgba(31, 35, 40, 0.1);
+  
+  /* Developer notes specific */
+  --developer-primary: #3b82f6;
+  --developer-secondary: #2563eb; 
+  --developer-accent: rgba(59, 130, 246, 0.1);
+  --developer-border: rgba(59, 130, 246, 0.3);
+  --developer-gradient-start: rgba(59, 130, 246, 0.05);
+  --developer-gradient-end: rgba(37, 99, 235, 0.1);
+  
+  /* Marketing notes specific */
+  --marketing-primary: #10b981;
+  --marketing-secondary: #059669;
+  --marketing-accent: rgba(16, 185, 129, 0.1);
+  --marketing-border: rgba(16, 185, 129, 0.3);
+  --marketing-gradient-start: rgba(16, 185, 129, 0.05);
+  --marketing-gradient-end: rgba(5, 150, 105, 0.1);
+}
+
+/* Dark theme variables */
+.dark {
+  --page-bg: #0d1117;
+  --card-bg: #161b22;
+  --card-border: rgba(255, 255, 255, 0.1);
+  
+  /* Code display */
+  --code-bg: rgba(255, 255, 255, 0.05);
+  --code-fg: #c9d1d9;
+  --code-border: rgba(240, 246, 252, 0.1);
+  
+  /* Developer notes specific */
+  --developer-primary: #60a5fa;
+  --developer-secondary: #3b82f6;
+  --developer-accent: rgba(96, 165, 250, 0.1);
+  --developer-border: rgba(96, 165, 250, 0.3);
+  --developer-gradient-start: rgba(96, 165, 250, 0.05);
+  --developer-gradient-end: rgba(59, 130, 246, 0.1);
+  
+  /* Marketing notes specific */
+  --marketing-primary: #34d399;
+  --marketing-secondary: #10b981;
+  --marketing-accent: rgba(52, 211, 153, 0.1);
+  --marketing-border: rgba(52, 211, 153, 0.3);
+  --marketing-gradient-start: rgba(52, 211, 153, 0.05);
+  --marketing-gradient-end: rgba(16, 185, 129, 0.1);
+}

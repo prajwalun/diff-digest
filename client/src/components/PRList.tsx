@@ -1,20 +1,36 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle, GitPullRequest, GitMerge, Calendar, User, FileText, Search, Github } from "lucide-react";
+import { 
+  CheckCircle, GitPullRequest, GitMerge, Calendar, 
+  User, FileText, Search, Github, ChevronLeft, ChevronRight 
+} from "lucide-react";
 import { PR } from "@/lib/types";
+import { PaginationResult } from "@/lib/github";
 import { formatDistance, format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface PRListProps {
   prs: PR[];
   selectedPR: PR | null;
   setSelectedPR: (pr: PR | null) => void;
   isLoading: boolean;
+  pagination?: PaginationResult;
+  onPageChange?: (page: number) => void;
+  currentRepo?: { owner: string; repo: string } | null;
 }
 
-export default function PRList({ prs, selectedPR, setSelectedPR, isLoading }: PRListProps) {
+export default function PRList({ 
+  prs, 
+  selectedPR, 
+  setSelectedPR, 
+  isLoading,
+  pagination,
+  onPageChange,
+  currentRepo
+}: PRListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedPR, setExpandedPR] = useState<number | null>(null);
   
@@ -34,6 +50,18 @@ export default function PRList({ prs, selectedPR, setSelectedPR, isLoading }: PR
   const toggleExpandPR = (prNumber: number, event: React.MouseEvent) => {
     event.stopPropagation();
     setExpandedPR(expandedPR === prNumber ? null : prNumber);
+  };
+  
+  const handlePrevPage = () => {
+    if (pagination && pagination.page > 1 && onPageChange) {
+      onPageChange(pagination.page - 1);
+    }
+  };
+  
+  const handleNextPage = () => {
+    if (pagination && pagination.has_next_page && onPageChange) {
+      onPageChange(pagination.page + 1);
+    }
   };
   
   // Filter PRs based on search query
@@ -255,6 +283,44 @@ export default function PRList({ prs, selectedPR, setSelectedPR, isLoading }: PR
                       >
                         Clear search
                       </button>
+                    </div>
+                  )}
+                  
+                  {/* Pagination Controls */}
+                  {pagination && pagination.page && !searchQuery && (
+                    <div className="mt-6 flex items-center justify-between">
+                      <div className="text-sm text-muted-foreground">
+                        {currentRepo && (
+                          <span>
+                            Showing page {pagination.page} 
+                            {pagination.total_count ? 
+                              ` of approximately ${Math.ceil(pagination.total_count / pagination.per_page)} pages` : 
+                              ''}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handlePrevPage}
+                          disabled={!pagination.has_prev_page || pagination.page <= 1}
+                          className="flex items-center gap-1"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          Previous
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleNextPage}
+                          disabled={!pagination.has_next_page}
+                          className="flex items-center gap-1"
+                        >
+                          Next
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>

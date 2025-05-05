@@ -1,0 +1,537 @@
+/**
+ * HTML Content Formatting Styles
+ * This file contains styles for beautifying HTML content from the API
+ */
+
+/* Direct formatting for HTML content */
+.notes-formatted-html {
+  color: inherit;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  font-size: 1rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+}
+
+/* Better heading styles with more contrast */
+.notes-formatted-html h1,
+.notes-formatted-html h2,
+.notes-formatted-html h3,
+.notes-formatted-html h4,
+.notes-formatted-html h5,
+.notes-formatted-html h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 700;
+  line-height: 1.25;
+  color: inherit;
+  letter-spacing: -0.01em;
+}
+
+.notes-formatted-html h1 { 
+  font-size: 1.75rem; 
+  border-bottom: 1px solid rgba(125, 125, 125, 0.3);
+  padding-bottom: 0.3em;
+}
+.notes-formatted-html h2 { 
+  font-size: 1.5rem; 
+  padding-bottom: 0.2em;
+}
+.notes-formatted-html h3 { font-size: 1.25rem; }
+.notes-formatted-html h4 { font-size: 1.1rem; }
+.notes-formatted-html h5, .notes-formatted-html h6 { font-size: 1rem; }
+
+/* Paragraph spacing and contrast */
+.notes-formatted-html p {
+  margin-bottom: 1.25em;
+  line-height: 1.6;
+  color: inherit;
+}
+
+/* Improved list formatting */
+.notes-formatted-html ul,
+.notes-formatted-html ol {
+  margin-bottom: 1.25em;
+  padding-left: 1.5em;
+  list-style-position: outside;
+}
+
+.notes-formatted-html ul {
+  list-style-type: disc;
+}
+
+.notes-formatted-html ol {
+  list-style-type: decimal;
+}
+
+.notes-formatted-html li {
+  margin-bottom: 0.5em;
+  padding-left: 0.25em;
+}
+
+.notes-formatted-html li > ul,
+.notes-formatted-html li > ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Enhanced code blocks with better contrast */
+.notes-formatted-html code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25em;
+  background-color: rgba(0, 0, 0, 0.07);
+  word-break: break-word;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: inherit;
+}
+
+.dark .notes-formatted-html code {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Links with better hover states */
+.notes-formatted-html a {
+  color: #3b82f6;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+}
+
+.dark .notes-formatted-html a {
+  color: #60a5fa;
+}
+
+.notes-formatted-html a:hover {
+  border-bottom-color: currentColor;
+  color: #2563eb;
+}
+
+.dark .notes-formatted-html a:hover {
+  color: #93c5fd;
+}
+
+/* Fix for any nested elements with improved display */
+.notes-formatted-html * {
+  max-width: 100%;
+}
+
+/* Pre-formatted code blocks */
+.notes-formatted-html pre {
+  margin-bottom: 1.25em;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-left: 3px solid rgba(59, 130, 246, 0.5);
+}
+
+.dark .notes-formatted-html pre {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.notes-formatted-html pre code {
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  font-size: 0.9em;
+  white-space: pre;
+}
+
+/* Tables with better styling */
+.notes-formatted-html table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.25em;
+  overflow-x: auto;
+  display: block;
+  border: 1px solid rgba(125, 125, 125, 0.2);
+}
+
+.notes-formatted-html table th {
+  background-color: rgba(0, 0, 0, 0.07);
+  font-weight: 600;
+}
+
+.dark .notes-formatted-html table th {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.notes-formatted-html table th,
+.notes-formatted-html table td {
+  padding: 0.5rem;
+  border: 1px solid rgba(125, 125, 125, 0.2);
+  text-align: left;
+}
+
+/* Added strong/em/blockquote styles for better consistency */
+.notes-formatted-html strong {
+  font-weight: 600;
+}
+
+.notes-formatted-html em {
+  font-style: italic;
+}
+
+.notes-formatted-html blockquote {
+  border-left: 3px solid rgba(125, 125, 125, 0.3);
+  padding-left: 1em;
+  margin-left: 0;
+  margin-bottom: 1.25em;
+  font-style: italic;
+  color: rgba(107, 114, 128, 1);
+}
+
+.dark .notes-formatted-html blockquote {
+  color: rgba(156, 163, 175, 1);
+  border-left-color: rgba(156, 163, 175, 0.4);
+}
+
+/* Basic typography for generated content */
+.note-content {
+  color: inherit;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  font-size: 1rem;
+  max-width: 100%;
+}
+
+/* Headings */
+.note-content h1,
+.note-content h2,
+.note-content h3,
+.note-content h4,
+.note-content h5,
+.note-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.note-content h1 {
+  font-size: 1.75rem;
+  border-bottom: 1px solid rgba(125, 125, 125, 0.2);
+  padding-bottom: 0.3em;
+}
+
+.note-content h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.2em;
+}
+
+.note-content h3 {
+  font-size: 1.25rem;
+}
+
+.note-content h4 {
+  font-size: 1.1rem;
+}
+
+.note-content h5, 
+.note-content h6 {
+  font-size: 1rem;
+}
+
+/* Text styling */
+.note-content p {
+  margin-bottom: 1.25em;
+  line-height: 1.6;
+}
+
+.note-content strong {
+  font-weight: 600;
+}
+
+.note-content em {
+  font-style: italic;
+}
+
+.note-content del {
+  text-decoration: line-through;
+}
+
+/* Links */
+.note-content a {
+  color: #3b82f6;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.dark .note-content a {
+  color: #60a5fa;
+}
+
+.note-content a:hover {
+  text-decoration: underline;
+  color: #2563eb;
+}
+
+.dark .note-content a:hover {
+  color: #93c5fd;
+}
+
+/* Lists */
+.note-content ul,
+.note-content ol {
+  margin-bottom: 1.25em;
+  padding-left: 1.5em;
+}
+
+.note-content ul {
+  list-style-type: disc;
+}
+
+.note-content ol {
+  list-style-type: decimal;
+}
+
+.note-content li {
+  margin-bottom: 0.5em;
+}
+
+.note-content li > ul,
+.note-content li > ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Code and pre formatting */
+.note-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25em;
+  white-space: pre-wrap;
+}
+
+.note-content pre {
+  margin-bottom: 1.25em;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark .note-content pre {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.note-content pre code {
+  padding: 0;
+  background-color: transparent;
+  color: inherit;
+  font-size: 0.9em;
+  white-space: pre;
+}
+
+/* Background colors based on language for code blocks */
+.note-content code.language-js,
+.note-content code.language-javascript {
+  background-color: rgba(247, 223, 30, 0.1);
+}
+
+.note-content code.language-ts,
+.note-content code.language-typescript {
+  background-color: rgba(0, 122, 204, 0.1);
+}
+
+.note-content code.language-html {
+  background-color: rgba(227, 79, 38, 0.1);
+}
+
+.note-content code.language-css {
+  background-color: rgba(21, 114, 182, 0.1);
+}
+
+.note-content code.language-json {
+  background-color: rgba(250, 240, 230, 0.3);
+}
+
+/* Blockquotes */
+.note-content blockquote {
+  border-left: 3px solid rgba(125, 125, 125, 0.3);
+  padding-left: 1em;
+  margin-left: 0;
+  margin-bottom: 1.25em;
+  font-style: italic;
+  color: rgba(107, 114, 128, 1);
+}
+
+.dark .note-content blockquote {
+  color: rgba(156, 163, 175, 1);
+}
+
+/* Tables */
+.note-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.25em;
+  overflow-x: auto;
+  display: block;
+  border: 1px solid rgba(125, 125, 125, 0.2);
+}
+
+.note-content table th {
+  background-color: rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+}
+
+.dark .note-content table th {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.note-content table th,
+.note-content table td {
+  padding: 0.5rem;
+  border: 1px solid rgba(125, 125, 125, 0.2);
+  text-align: left;
+}
+
+.note-content table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.dark .note-content table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Horizontal rule */
+.note-content hr {
+  border: 0;
+  border-top: 1px solid rgba(125, 125, 125, 0.2);
+  margin: 2em 0;
+}
+
+/* Images */
+.note-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+  margin: 1em 0;
+}
+
+/* Developer-specific styling */
+.developer-content code {
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dark .developer-content code {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.developer-content pre {
+  border-left: 3px solid rgba(59, 130, 246, 0.5);
+}
+
+/* Marketing-specific styling */
+.marketing-content code {
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.dark .marketing-content code {
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.marketing-content pre {
+  border-left: 3px solid rgba(16, 185, 129, 0.5);
+}
+
+/* Special highlights for key terms */
+.special-keyword {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.dark .special-keyword {
+  color: #60a5fa;
+}
+
+/* Callouts and notices */
+.note-content .notice,
+.note-content .callout {
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid;
+}
+
+.note-content .notice-info,
+.note-content .callout-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-left-color: rgb(59, 130, 246);
+}
+
+.note-content .notice-warning,
+.note-content .callout-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-left-color: rgb(245, 158, 11);
+}
+
+.note-content .notice-success, 
+.note-content .callout-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-left-color: rgb(16, 185, 129);
+}
+
+.note-content .notice-error,
+.note-content .callout-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left-color: rgb(239, 68, 68);
+}
+
+/* File paths */
+.note-content .file-path {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.dark .note-content .file-path {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Terminal output */
+.note-content .terminal-output {
+  background-color: rgba(0, 0, 0, 0.9);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1.25em;
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+
+/* Special treatment for command syntax */
+.note-content .command {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+  border: 1px solid rgba(125, 125, 125, 0.2);
+}
+
+.dark .note-content .command {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(125, 125, 125, 0.3);
+}
+
+/* Special treatment for UI components */
+.note-content .ui-component {
+  font-weight: 500;
+  color: #3b82f6;
+}
+
+.dark .note-content .ui-component {
+  color: #60a5fa;
+}

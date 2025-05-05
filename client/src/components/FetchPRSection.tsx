@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { fetchPRs } from "@/lib/github";
-import { RefreshCw, Github, Search, GitMerge, AlertCircle } from "lucide-react";
+import { fetchPRs, PaginationResult } from "@/lib/github";
+import { RefreshCw, Github, GitMerge } from "lucide-react";
 import { PR } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import EmptyState from "./EmptyState";
-import ErrorState from "./ErrorState";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface FetchPRSectionProps {
   repoInfo: { owner: string; repo: string } | null;
@@ -17,9 +15,11 @@ interface FetchPRSectionProps {
   setIsLoadingPRs: (loading: boolean) => void;
   isLoadingPRs: boolean;
   setError: (error: string | null) => void;
+  setPagination: (pagination: PaginationResult | null) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
-// Sample popular repos for quick access
 const POPULAR_REPOS = [
   { name: "React", url: "facebook/react" },
   { name: "Next.js", url: "vercel/next.js" },
@@ -34,147 +34,128 @@ export default function FetchPRSection({
   setSelectedPR,
   setIsLoadingPRs,
   isLoadingPRs,
-  setError
+  setError,
+  setPagination,
+  currentPage,
+  setCurrentPage
 }: FetchPRSectionProps) {
   const [repoUrl, setRepoUrl] = useState("");
   const [showQuickRepos, setShowQuickRepos] = useState(true);
   const { toast } = useToast();
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
-
-  // Load recent searches from localStorage on component mount
-  useEffect(() => {
-    const savedSearches = localStorage.getItem('recentRepoSearches');
-    if (savedSearches) {
-      try {
-        setRecentSearches(JSON.parse(savedSearches));
-      } catch (e) {
-        console.error("Failed to parse recent searches from localStorage", e);
-      }
-    }
-  }, []);
-
-  // Save recent searches to localStorage
-  const saveRecentSearch = (search: string) => {
-    const updatedSearches = [search, ...recentSearches.filter(s => s !== search)].slice(0, 5);
-    setRecentSearches(updatedSearches);
-    localStorage.setItem('recentRepoSearches', JSON.stringify(updatedSearches));
-  };
-
-  const handleRepoUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRepoUrl(e.target.value);
-  };
 
   const parseRepoUrl = (url: string): { owner: string; repo: string } | null => {
-    // Handle direct owner/repo format
-    if (/^[a-zA-Z0-9-]+\/[a-zA-Z0-9-_.]+$/.test(url)) {
+    if (/^[\w-]+\/[\w.-]+$/.test(url)) {
       const [owner, repo] = url.split("/");
       return { owner, repo };
     }
-
-    // Handle full GitHub URL format
     try {
-      const urlObj = new URL(url);
-      if (urlObj.hostname === "github.com") {
-        const pathParts = urlObj.pathname.split("/").filter(Boolean);
-        if (pathParts.length >= 2) {
-          return { owner: pathParts[0], repo: pathParts[1] };
-        }
+      const parsed = new URL(url);
+      const parts = parsed.pathname.split("/").filter(Boolean);
+      if (parsed.hostname === "github.com" && parts.length >= 2) {
+        return { owner: parts[0], repo: parts[1] };
       }
-    } catch (error) {
-      // Not a valid URL, continue to error case
-    }
-
+    } catch (_) {}
     return null;
+  };
+
+  const fetchPagedPRs = async (owner: string, repo: string, page: number = 1) => {
+    setIsLoadingPRs(true);
+    setError(null);
+
+    try {
+      console.log(`Fetching PRs for ${owner}/${repo}, page ${page}`);
+      
+      const result = await fetchPRs(owner, repo, page);
+      
+      // Validate response shape
+      console.log("PR fetch result:", {
+        prsCount: result.pullRequests?.length || 0,
+        hasPagination: !!result.pagination,
+        paginationDetails: result.pagination
+      });
+      
+      // Set pull requests data
+      setPRs(Array.isArray(result.pullRequests) ? result.pullRequests : []);
+      
+      // Safely set pagination data
+      if (result.pagination && typeof result.pagination === 'object') {
+        setPagination(result.pagination);
+        
+        // Ensure page is a number
+        if (typeof result.pagination.page === 'number') {
+          setCurrentPage(result.pagination.page);
+        } else {
+          // Fallback to the page we requested if API doesn't return it correctly
+          setCurrentPage(page);
+          
+          // Fix the pagination object
+          const fixedPagination = {
+            ...result.pagination,
+            page: page
+          };
+          setPagination(fixedPagination);
+        }
+      } else {
+        // Create a default pagination object if none exists
+        const defaultPagination = {
+          page: page,
+          per_page: 10,
+          has_next_page: false,
+          has_prev_page: page > 1,
+          total_count: null
+        };
+        setPagination(defaultPagination);
+      }
+      
+      return result;
+    } catch (error: any) {
+      console.error("Error fetching PRs:", error);
+      setError(error.message || "Unknown error");
+      setPRs([]);
+      setPagination(null);
+      toast({
+        title: "Error Fetching PRs",
+        description: error.message || "Unknown error",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsLoadingPRs(false);
+    }
   };
 
   const handleFetchPRs = async (inputUrl = repoUrl) => {
     const parsedRepo = parseRepoUrl(inputUrl);
-    
     if (!parsedRepo) {
       toast({
-        title: (
-          <>
-            <AlertCircle className="h-4 w-4 mr-1.5" />
-            Invalid Repository Format
-          </>
-        ),
-        description: "Please enter a valid GitHub repository URL or owner/repo format (e.g. 'facebook/react' or 'https://github.com/vercel/next.js')",
-        variant: "destructive",
-        action: (
-          <div 
-            onClick={() => setRepoUrl("facebook/react")} 
-            className="py-1 px-3 rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-medium hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-800/60 cursor-pointer transition-colors duration-200"
-          >
-            Try Example
-          </div>
-        ),
+        title: "Invalid Repository Format",
+        description: "Enter in the form 'owner/repo' or full GitHub URL",
+        variant: "destructive"
       });
       return;
     }
-    
-    // Hide quick repos section when a search starts
-    setShowQuickRepos(false);
-    
-    // Save to recent searches
-    saveRecentSearch(inputUrl);
 
-    setIsLoadingPRs(true);
+    setShowQuickRepos(false);
     setSelectedPR(null);
-    setError(null);
+    setCurrentPage(1); // Reset to first page when fetching a new repo
 
     try {
-      const prs = await fetchPRs(parsedRepo.owner, parsedRepo.repo);
-      setPRs(prs);
+      const result = await fetchPagedPRs(parsedRepo.owner, parsedRepo.repo, 1);
       setRepoInfo(parsedRepo);
+
+      // Show success message with pagination info
+      const prCount = result.pullRequests.length;
+      const totalEstimate = result.pagination.total_count;
       
-      if (prs.length === 0) {
-        toast({
-          title: (
-            <>
-              <AlertCircle className="h-4 w-4 mr-1.5" />
-              No Pull Requests Found
-            </>
-          ),
-          description: "The repository exists but has no merged pull requests.",
-          variant: "warning",
-        });
-      } else {
-        toast({
-          title: (
-            <>
-              <GitMerge className="h-4 w-4 mr-1.5" />
-              Pull Requests Loaded
-            </>
-          ),
-          description: `Found ${prs.length} merged PRs from ${parsedRepo.owner}/${parsedRepo.repo}`,
-          variant: "success",
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching PRs:", error);
-      setError(error instanceof Error ? error.message : "Unknown error occurred");
       toast({
-        title: (
-          <>
-            <AlertCircle className="h-4 w-4 mr-1.5" />
-            Error Fetching PRs
-          </>
-        ),
-        description: error instanceof Error ? error.message : "Unknown error occurred",
-        variant: "destructive",
-        action: (
-          <div 
-            onClick={() => handleFetchPRs()} 
-            className="py-1 px-3 rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-medium hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-800/60 cursor-pointer transition-colors duration-200 flex items-center"
-          >
-            <RefreshCw className="h-3 w-3 mr-1.5" />
-            Retry
-          </div>
-        ),
+        title: prCount ? "Pull Requests Loaded" : "No Pull Requests Found",
+        description: prCount
+          ? `Found ${prCount} PRs on page 1${totalEstimate ? ` (approximately ${totalEstimate} total)` : ''} from ${parsedRepo.owner}/${parsedRepo.repo}`
+          : "The repository exists but has no merged pull requests.",
+        variant: prCount ? "default" : "warning"
       });
-      setPRs([]);
-    } finally {
-      setIsLoadingPRs(false);
+    } catch (error: any) {
+      // Error already handled in fetchPagedPRs
     }
   };
 
@@ -184,18 +165,64 @@ export default function FetchPRSection({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleFetchPRs();
+    if (e.key === "Enter") handleFetchPRs();
+  };
+  
+  // Function to handle page changes - to be passed to the PRList component
+  const handlePageChange = async (page: number) => {
+    if (!repoInfo) return;
+    
+    // Fetch the new page of PRs
+    try {
+      await fetchPagedPRs(repoInfo.owner, repoInfo.repo, page);
+      
+      // Reset selected PR when changing pages
+      setSelectedPR(null);
+      
+      // Scroll back to the top of the PR list for better UX
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    } catch (error) {
+      // Error handling already in fetchPagedPRs
+      console.error("Failed to change page:", error);
     }
   };
+  
+  // Watch for currentPage changes from parent component
+  React.useEffect(() => {
+    // Only fetch when both repoInfo exists and currentPage changes to a valid value
+    if (repoInfo && currentPage > 0) {
+      // Create a cleanup variable to prevent state updates after unmount
+      let isActive = true;
+      
+      const fetchPage = async () => {
+        try {
+          if (isActive) {
+            await fetchPagedPRs(repoInfo.owner, repoInfo.repo, currentPage);
+          }
+        } catch (err) {
+          console.error("Error in page fetch effect:", err);
+        }
+      };
+      
+      fetchPage();
+      
+      // Cleanup function
+      return () => {
+        isActive = false;
+      };
+    }
+  }, [currentPage, repoInfo?.owner, repoInfo?.repo]); // More specific dependencies
 
   return (
-    <section className="py-8 px-4">
+    <section id="fetch-pr-section" className="py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div 
-          className="mb-6 flex items-center"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 flex items-center" 
+          initial={{ opacity: 0, y: -10 }} 
+          animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.3 }}
         >
           <div className="relative">
@@ -206,163 +233,93 @@ export default function FetchPRSection({
         </motion.div>
 
         <motion.div 
-          className="accent-card accent-purple rounded-xl shadow-sm overflow-hidden mb-8"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl shadow-sm overflow-hidden mb-8 accent-card accent-purple" 
+          initial={{ opacity: 0, y: 10 }} 
+          animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <div className="p-6 relative">
-            {/* Subtle animated background */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute -right-20 top-4 w-40 h-40 bg-highlight-purple/5 rounded-full blur-2xl animate-pulse-slow"></div>
-              <div className="absolute -left-10 -bottom-20 w-40 h-40 bg-highlight-blue/5 rounded-full blur-2xl animate-pulse-slow" style={{ animationDelay: '1.5s' }}></div>
-            </div>
-            
-            <div className="relative z-10 mb-4">
-              <label htmlFor="repo-url" className="block text-sm font-medium mb-2 flex items-center">
-                <div className="flex items-center justify-center h-5 w-5 rounded-full bg-highlight-purple/20 mr-2">
-                  <Github className="h-3 w-3 text-highlight-purple" />
-                </div>
-                GitHub Repository URL
-              </label>
-              <div className="relative">
-                <Input
-                  id="repo-url"
-                  type="text"
-                  placeholder="https://github.com/owner/repo or owner/repo"
-                  value={repoUrl}
-                  onChange={handleRepoUrlChange}
-                  onKeyDown={handleKeyDown}
-                  className="pr-12 h-10 pl-10 modern-input focus-within:border-highlight-purple focus-within:ring-highlight-purple/30"
-                />
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Search className="h-4 w-4 text-muted-foreground" />
-                </div>
-                {repoUrl && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-1 top-1 h-8 px-2 text-muted-foreground hover:text-foreground"
-                    onClick={() => setRepoUrl("")}
-                  >
-                    ×
-                  </Button>
-                )}
-              </div>
-              <div className="mt-1.5 flex items-center text-sm text-muted-foreground">
-                <GitMerge className="h-3 w-3 mr-1.5" />
-                Paste a GitHub repository URL or enter in the format "owner/repo"
-              </div>
-            </div>
+          <div className="p-6">
+            <label htmlFor="repo-url" className="block text-sm font-medium mb-2 flex items-center">
+              <Github className="h-4 w-4 mr-2" /> GitHub Repository
+            </label>
+            <Input
+              id="repo-url"
+              value={repoUrl}
+              onChange={e => setRepoUrl(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="owner/repo or GitHub URL"
+              className="pr-10 pl-10"
+            />
+            {repoUrl && (
+              <Button 
+                className="mt-2" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setRepoUrl("")}
+              >
+                Clear
+              </Button>
+            )}
 
-            {/* Quick access repos */}
-            <AnimatePresence>
-              {showQuickRepos && (
-                <motion.div 
-                  className="my-6 p-3 bg-muted/30 rounded-lg border border-border/50"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="mb-3 text-sm font-medium flex items-center">
-                    <span className="bg-highlight-purple/20 text-highlight-purple text-xs px-1.5 py-0.5 rounded mr-2">
-                      Popular
-                    </span>
-                    Try one of these repositories:
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {POPULAR_REPOS.map((repo) => (
-                      <Button
-                        key={repo.url}
-                        variant="outline"
-                        size="sm"
-                        className="text-xs github-btn border-border/70 hover:border-highlight-purple/50"
-                        onClick={() => handleQuickRepoSelect(repo.url)}
-                      >
-                        <Github className="h-3 w-3 mr-1.5 text-highlight-purple/80" />
-                        {repo.name}
-                      </Button>
-                    ))}
-                  </div>
-                  
-                  {recentSearches.length > 0 && (
-                    <>
-                      <div className="my-3 text-sm font-medium flex items-center">
-                        <span className="bg-highlight-blue/20 text-highlight-blue text-xs px-1.5 py-0.5 rounded mr-2">
-                          Recent
-                        </span>
-                        Your previous searches:
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {recentSearches.map((search) => (
-                          <Button
-                            key={search}
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs border border-border/50 bg-background/50 hover:bg-background/80"
-                            onClick={() => handleQuickRepoSelect(search)}
-                          >
-                            <GitMerge className="h-3 w-3 mr-1.5 text-highlight-blue/80" />
-                            {search}
-                          </Button>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {showQuickRepos && (
+              <div className="mt-6">
+                <div className="text-sm font-medium mb-2">Try popular repositories:</div>
+                <div className="flex flex-wrap gap-2">
+                  {POPULAR_REPOS.map(repo => (
+                    <Button 
+                      key={repo.url} 
+                      onClick={() => handleQuickRepoSelect(repo.url)} 
+                      size="sm" 
+                      variant="outline"
+                    >
+                      {repo.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-            <div className="mt-6 flex justify-end">
-              <Button
-                type="button"
-                className="bg-primary text-black font-medium hover:bg-primary/90 transition-all duration-200"
-                onClick={() => handleFetchPRs()}
+            <div className="mt-6 text-right">
+              <Button 
+                onClick={() => handleFetchPRs()} 
                 disabled={isLoadingPRs}
               >
                 {isLoadingPRs ? (
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
                 ) : (
-                  <GitMerge className="mr-2 h-4 w-4" />
-                )}
-                {isLoadingPRs ? "Loading..." : "Fetch Pull Requests"}
+                  <GitMerge className="h-4 w-4 mr-2" />
+                )} 
+                Fetch PRs
               </Button>
             </div>
           </div>
         </motion.div>
 
-        <AnimatePresence>
-          {repoInfo && (
-            <motion.div 
-              className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6 border border-blue-100 dark:border-blue-800"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex items-center">
-                <Github className="h-4 w-4 text-blue-500 mr-2" />
-                <div className="text-sm">
-                  Currently viewing: <span className="font-medium text-blue-700 dark:text-blue-300">{repoInfo.owner}/{repoInfo.repo}</span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="ml-auto text-xs h-7"
-                  onClick={() => {
-                    setRepoInfo(null);
-                    setPRs([]);
-                    setShowQuickRepos(true);
-                  }}
-                >
-                  Change
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {repoInfo && (
+          <motion.div 
+            className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6 border" 
+            initial={{ opacity: 0, y: 10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm">
+                Currently viewing: <strong>{repoInfo.owner}/{repoInfo.repo}</strong>
+              </span>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={() => { 
+                  setRepoInfo(null); 
+                  setPRs([]); 
+                  setShowQuickRepos(true); 
+                }}
+              >
+                Change
+              </Button>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );

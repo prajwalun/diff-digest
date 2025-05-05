@@ -42,4 +42,25 @@ export interface PR {
 export interface NotesData {
   developer: string;
   marketing: string;
+  enrichmentStatus?: {
+    inProgress: boolean;
+    message: string;
+    error?: string;
+  };
+  enrichedData?: {
+    relatedIssues?: Array<{ number: number; title: string; url: string }>;
+    fileStats?: {
+      added: number;
+      modified: number;
+      removed: number;
+      totalAdditions: number;
+      totalDeletions: number;
+      keyFiles: Array<{ name: string; additions: number; deletions: number }>;
+    };
+    repoStats?: {
+      stars: number;
+      forks: number;
+      language: string;
+    };
+  };
 }

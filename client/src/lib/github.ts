@@ -2,11 +2,36 @@ import { PR } from "./types";
 import { apiRequest } from "./queryClient";
 
 /**
- * Fetches pull requests from GitHub for a given repo
+ * Pagination result interface
  */
-export async function fetchPRs(owner: string, repo: string): Promise<PR[]> {
+export interface PaginationResult {
+  page: number;
+  per_page: number;
+  has_next_page: boolean;
+  has_prev_page: boolean;
+  total_count: number | null;
+}
+
+/**
+ * PR Fetch result interface with pagination
+ */
+export interface PRFetchResult {
+  pullRequests: PR[];
+  pagination: PaginationResult;
+}
+
+/**
+ * Fetches pull requests from GitHub for a given repo with pagination
+ */
+export async function fetchPRs(
+  owner: string, 
+  repo: string, 
+  page: number = 1, 
+  perPage: number = 10
+): Promise<PRFetchResult> {
   try {
-    const response = await fetch(`/api/github/prs?owner=${owner}&repo=${repo}`);
+    const url = `/api/github/prs?owner=${owner}&repo=${repo}&page=${page}&per_page=${perPage}`;
+    const response = await fetch(url);
     
     if (!response.ok) {
       const errorText = await response.text();
@@ -14,7 +39,10 @@ export async function fetchPRs(owner: string, repo: string): Promise<PR[]> {
     }
     
     const data = await response.json();
-    return data.pullRequests;
+    return {
+      pullRequests: data.pullRequests,
+      pagination: data.pagination
+    };
   } catch (error) {
     console.error("Error fetching PRs:", error);
     throw error;
@@ -31,7 +59,7 @@ export async function generateNotes(
   pr_title: string,
   diff_url: string,
   diff_content?: string,
-  onStreamUpdate?: (type: string, content: string) => void
+  onStreamUpdate?: (type: string, content: string, status?: string, data?: any, resend?: boolean) => void
 ): Promise<{
   technicalNotes?: string;
   marketingNotes?: string;
@@ -80,41 +108,79 @@ export async function generateNotes(
       let decoder = new TextDecoder();
       let buffer = "";
       
+      console.log("Starting to process stream from OpenAI/server...");
+      
       while (true) {
         const { done, value } = await reader.read();
         
         if (done) {
+          console.log("Stream reading complete");
           break;
         }
         
         // Decode the chunk and add it to our buffer
-        buffer += decoder.decode(value, { stream: true });
+        const decodedChunk = decoder.decode(value, { stream: true });
+        buffer += decodedChunk;
+        
+        console.log(`Received chunk of size ${value.length}, decoded length: ${decodedChunk.length}`);
         
         // Process each complete SSE message
         const messages = buffer.split("\n\n");
         buffer = messages.pop() || ""; // Keep the last potentially incomplete message in the buffer
         
+        console.log(`Processing ${messages.length} complete SSE messages`);
+        
         for (const message of messages) {
           if (message.startsWith("data: ")) {
             try {
-              const data = JSON.parse(message.substring(6));
+              const jsonPart = message.substring(6);
+              console.log(`Parsing SSE data: ${jsonPart.substring(0, 100)}${jsonPart.length > 100 ? '...' : ''}`);
+              
+              const data = JSON.parse(jsonPart);
+              console.log(`Received message of type: ${data.type}, content length: ${data.content?.length || 0}`);
+              
+              // Handle special resend flag for complete content replacement
+              const resend = data.resend === true;
               
               if (data.type === "developer") {
-                if (data.content) {
-                  technicalNotes += data.content;
-                  onStreamUpdate("developer", data.content);
+                if (data.content !== undefined) { // Check for undefined specifically
+                  // If resend flag is true, we replace everything instead of appending
+                  if (resend) {
+                    console.log(`RESEND flag detected for developer notes, replacing content`);
+                    technicalNotes = data.content;
+                  } else {
+                    technicalNotes += data.content;
+                  }
+                  
+                  // Pass the resend flag to the callback
+                  onStreamUpdate("developer", data.content, data.status, null, resend);
                 }
               } else if (data.type === "marketing") {
-                if (data.content) {
-                  marketingNotes += data.content;
-                  onStreamUpdate("marketing", data.content);
+                if (data.content !== undefined) { // Check for undefined specifically
+                  // If resend flag is true, we replace everything instead of appending
+                  if (resend) {
+                    console.log(`RESEND flag detected for marketing notes, replacing content`);
+                    marketingNotes = data.content;
+                  } else {
+                    marketingNotes += data.content;
+                  }
+                  
+                  // Pass the resend flag to the callback
+                  onStreamUpdate("marketing", data.content, data.status, null, resend);
                 }
+              } else if (data.type === "enrichment") {
+                // Handle enrichment events with data passing
+                console.log(`Enrichment event: ${data.status}`);
+                onStreamUpdate("enrichment", data.content, data.status, data.data);
               } else if (data.type === "error") {
+                console.error(`Error in stream: ${data.content}`);
                 throw new Error(data.content);
               }
             } catch (e) {
-              console.error("Error parsing stream data:", e);
+              console.error("Error parsing stream data:", e, "Raw message:", message);
             }
+          } else {
+            console.log(`Skipping non-data message: ${message.substring(0, 50)}${message.length > 50 ? '...' : ''}`);
           }
         }
       }

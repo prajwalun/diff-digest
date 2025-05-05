@@ -1,0 +1,384 @@
+/* Typography styles for the generated notes content */
+.note-content {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.7;
+  font-size: 1rem;
+  color: var(--text-color);
+  margin: 0;
+  padding: 0.5rem;
+  
+  /* Improved reading experience */
+  max-width: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode adjustments */
+.dark .note-content {
+  color: rgba(255, 255, 255, 0.87);
+}
+
+/* Base paragraphs */
+.note-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+}
+
+/* Headings */
+.note-content h1, 
+.note-content h2, 
+.note-content h3, 
+.note-content h4, 
+.note-content h5 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--heading-color);
+  letter-spacing: -0.01em; /* Slightly tighter letter spacing for headings */
+}
+
+.dark .note-content h1,
+.dark .note-content h2,
+.dark .note-content h3,
+.dark .note-content h4,
+.dark .note-content h5 {
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Subtle text shadow for better contrast */
+}
+
+.note-content h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.note-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2.25rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.note-content h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1.15rem;
+  position: relative;
+}
+
+.note-content h4 {
+  font-size: 1.25rem;
+  margin-top: 1.75rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  position: relative;
+}
+
+.note-content h5 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Lists */
+.note-content ul,
+.note-content ol {
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1.75rem;
+}
+
+.note-content li {
+  margin-bottom: 0.75rem;
+  position: relative;
+  line-height: 1.6;
+  padding-left: 0.25rem;
+}
+
+.note-content li:last-child {
+  margin-bottom: 0.25rem; /* Less margin on the last item */
+}
+
+/* Better bullets for unordered lists */
+.note-content ul {
+  list-style: none;
+  padding-left: 1.25rem;
+}
+
+.note-content ul li {
+  position: relative;
+}
+
+.note-content ul li::before {
+  content: "";
+  position: absolute;
+  left: -1.25rem;
+  top: 0.6rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  opacity: 0.8;
+}
+
+.dark .note-content ul li::before {
+  background-color: #60a5fa;
+  opacity: 0.9;
+}
+
+/* Better numbering for ordered lists */
+.note-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  counter-reset: item;
+}
+
+.note-content ol li {
+  counter-increment: item;
+}
+
+/* Nested lists */
+.note-content ul ul,
+.note-content ol ol,
+.note-content ul ol,
+.note-content ol ul {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Task lists */
+.note-content ul.task-list {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+
+.note-content ul.task-list li {
+  padding-left: 1.75rem;
+}
+
+.note-content ul.task-list li::before {
+  display: none;
+}
+
+/* Code elements */
+.note-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
+  background-color: var(--code-bg);
+  border-radius: 3px;
+  color: var(--code-color);
+  font-feature-settings: "calt" 1;
+  border: 1px solid rgba(71, 85, 105, 0.15);
+  white-space: pre !important;
+  display: inline-block;
+  font-size: 0.95em;
+  margin: 0 2px;
+  /* These extras are necessary for proper display in all browsers */
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  vertical-align: text-bottom !important;
+}
+
+.dark .note-content code {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  border-color: rgba(100, 116, 139, 0.3);
+  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-family: monospace !important;
+}
+
+/* Special styling for @ directives in Tailwind */
+.note-content .special-at-symbol {
+  color: #f472b6 !important;
+  font-weight: bold;
+}
+
+/* Special styling for full Tailwind directives */
+.note-content code:contains("@tailwind utilities") {
+  color: #f472b6 !important;
+  font-weight: bold;
+  background-color: rgba(244, 114, 182, 0.1) !important;
+}
+
+/* Force color on every Tailwind keyword */
+.note-content code:contains("tailwind") {
+  color: #f472b6 !important;
+}
+
+/* Pre blocks for multi-line code */
+.note-content pre {
+  background-color: var(--code-block-bg);
+  border-radius: 8px;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(71, 85, 105, 0.1);
+  position: relative;
+}
+
+.dark .note-content pre {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(100, 116, 139, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.note-content pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--code-block-color);
+  white-space: pre;
+  border: none;
+  display: block;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+.dark .note-content pre code {
+  color: #e2e8f0;
+}
+
+/* Syntax highlighting hints */
+.note-content .keyword, 
+.note-content .tag, 
+.note-content .important {
+  color: #c678dd; /* purple */
+}
+
+.dark .note-content .keyword,
+.dark .note-content .tag,
+.dark .note-content .important {
+  color: #c678dd;
+}
+
+.note-content .function, 
+.note-content .method {
+  color: #61afef; /* blue */
+}
+
+.dark .note-content .function,
+.dark .note-content .method {
+  color: #61afef;
+}
+
+.note-content .string, 
+.note-content .value {
+  color: #98c379; /* green */
+}
+
+.dark .note-content .string,
+.dark .note-content .value {
+  color: #98c379;
+}
+
+.note-content .comment {
+  color: #7f848e; /* gray */
+  font-style: italic;
+}
+
+.dark .note-content .comment {
+  color: #7f848e;
+}
+
+/* Strong emphasis */
+.note-content strong {
+  font-weight: 600;
+  color: var(--strong-color);
+}
+
+.dark .note-content strong {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* Blockquote styling */
+.note-content blockquote {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+  color: var(--blockquote-color);
+  background-color: var(--blockquote-bg);
+  padding: 1rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5rem 0;
+}
+
+.dark .note-content blockquote {
+  background-color: rgba(30, 41, 59, 0.5);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Horizontal rule */
+.note-content hr {
+  border: 0;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 2rem 0;
+}
+
+/* Links */
+.note-content a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.note-content a:hover {
+  text-decoration: underline;
+  color: var(--link-hover-color);
+}
+
+.dark .note-content a {
+  color: #60a5fa;
+}
+
+.dark .note-content a:hover {
+  color: #93c5fd;
+}
+
+/* CSS variables for theme colors */
+:root {
+  --text-color: #374151;
+  --heading-color: #111827;
+  --border-color: #e5e7eb;
+  --code-bg: #f1f5f9;
+  --code-color: #0f172a;
+  --code-block-bg: #f8fafc;
+  --code-block-color: #334155;
+  --strong-color: #111827;
+  --accent-color: #3b82f6;
+  --blockquote-color: #4b5563;
+  --blockquote-bg: #f9fafb;
+  --link-color: #2563eb;
+  --link-hover-color: #1d4ed8;
+}
+
+.dark {
+  --text-color: rgba(255, 255, 255, 0.87);
+  --heading-color: white;
+  --border-color: #334155;
+  --code-bg: rgba(55, 65, 81, 0.5);
+  --code-color: #e2e8f0;
+  --code-block-bg: #1e293b;
+  --code-block-color: #e2e8f0;
+  --strong-color: rgba(255, 255, 255, 0.95);
+  --accent-color: #3b82f6;
+  --blockquote-color: rgba(255, 255, 255, 0.8);
+  --blockquote-bg: rgba(30, 41, 59, 0.5);
+  --link-color: #60a5fa;
+  --link-hover-color: #93c5fd;
+}

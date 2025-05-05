@@ -85,20 +85,34 @@ async function generateTechnicalNotes(title: string, diffContent: string): Promi
     
     GUIDELINES:
     - Be concise, technical, and focus on the 'what' and 'why' of the changes
-    - Break down complex changes into digestible sections
+    - Break down complex changes into digestible sections with proper headings
     - Highlight API changes, implementation details, and technical decisions
     - Mention any performance improvements or optimizations
     - Include code snippets for significant changes when applicable
-    - Format the output using HTML tags
+    - Format the output using structured HTML tags - don't output just a single block of text
+    - Ensure technical accuracy and provide clear explanations of the changes
+
+    HTML FORMATTING REQUIREMENTS:
+    - Start with an h3 tag containing a clear title summarizing the PR
+    - Use <h4> tags for primary section headers like "Overview", "Implementation Details", "API Changes"
+    - Use <h5> tags for sub-section headers
+    - Use <p> tags for paragraphs, and ensure proper spacing between paragraphs
+    - Use <ul> and <li> tags for lists, <ol> for ordered lists
+    - Use <strong> tags for emphasis of important terms or concepts
+    - Use <code> tags for inline code references
+    - Use <pre><code> tags for multi-line code blocks
+    - For file paths, use <code class="file-path">path/to/file</code>
+    - For important changes, use <div class="notice notice-info"> for information blocks
+    - For warnings or potential issues, use <div class="notice notice-warning">
     
-    For the HTML formatting:
-    - Use <h4> tags for section headers
-    - Use <p> tags for paragraphs
-    - Use <ul> and <li> tags for lists
-    - Use <strong> tags for emphasis
-    - Use <code> tags for code snippets
+    STRUCTURE THE NOTES CLEARLY WITH THE FOLLOWING SECTIONS:
+    1. Brief summary/overview of the changes
+    2. Technical implementation details
+    3. Impact on existing code/APIs
+    4. Testing considerations (if applicable)
     
-    Return ONLY the developer notes with no introduction or explanation.
+    Return ONLY the developer notes with proper HTML formatting and structure.
+    Ensure all HTML tags are properly closed and balanced.
   `;
   
   try {
@@ -142,15 +156,26 @@ async function generateMarketingNotes(title: string, technicalNotes: string): Pr
     - Highlight new features, improvements, and how they help users
     - Emphasize user experience enhancements and problem-solving aspects
     - Avoid technical jargon and explain any necessary technical terms
-    - Format the output using HTML tags
+    - Format the output using well-structured HTML tags
+    - Keep it concise and highlight the user-focused aspects of the changes
     
-    For the HTML formatting:
-    - Use <h4> tags for section headers
-    - Use <p> tags for paragraphs
-    - Use <ul> and <li> tags for lists
-    - Use <strong> tags for emphasis
+    HTML FORMATTING REQUIREMENTS:
+    - Start with an h3 tag containing an engaging title that summarizes the user benefit
+    - Use <h4> tags for primary section headers like "User Benefits", "New Features", "Improvements"
+    - Use <p> tags for paragraphs, and ensure proper spacing between paragraphs
+    - Use <ul> and <li> tags for lists of features or benefits, making them scannable
+    - Use <strong> tags for emphasis of important benefits or features
+    - For highlighting key improvements, use <div class="notice notice-success"> to call attention to them
+    - For indicating any noted issues or caveats, use <div class="notice notice-warning">
     
-    Return ONLY the marketing notes with no introduction or explanation.
+    STRUCTURE THE NOTES CLEARLY WITH THE FOLLOWING SECTIONS:
+    1. Brief summary of the benefit to users
+    2. Key improvements or features users will notice
+    3. User impact or expected improvements
+    4. Release Notes Summary with most important bullet points
+    
+    Return ONLY the marketing notes with proper HTML formatting and structure.
+    Ensure all HTML tags are properly closed and balanced.
   `;
   
   try {

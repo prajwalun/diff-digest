@@ -1,0 +1,229 @@
+/* Premium Typography for Generated Notes */
+
+/* Base content styling */
+.notes-content {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.65;
+  color: #e2e8f0;
+  letter-spacing: -0.011em;
+}
+
+/* Headers with enhanced styling */
+.notes-content h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 2.2rem 0 1.3rem 0;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+}
+
+/* Add subtle accent to headers */
+.notes-content h4::before {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 2.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, rgba(59, 130, 246, 0.1));
+  border-radius: 1px;
+}
+
+.notes-content h4:first-child {
+  margin-top: 0.5rem;
+}
+
+/* Paragraphs with better readability */
+.notes-content p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.02rem;
+  max-width: 70ch; /* Better readability limit */
+}
+
+/* Lists with enhanced spacing */
+.notes-content ul,
+.notes-content ol {
+  margin: 1.5rem 0 2rem 0.2rem;
+  padding-left: 1.6rem;
+}
+
+.notes-content ul {
+  list-style-type: none; /* Custom bullets */
+}
+
+.notes-content ol {
+  list-style-type: decimal;
+  padding-left: 2rem;
+}
+
+/* Custom list bullets */
+.notes-content ul li {
+  margin-bottom: 1rem;
+  padding-left: 1.2rem;
+  position: relative;
+}
+
+.notes-content ul li::before {
+  content: "•";
+  position: absolute;
+  left: -0.2rem;
+  color: rgba(59, 130, 246, 0.8);
+  font-size: 1.2em;
+}
+
+.notes-content ol li {
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
+}
+
+.notes-content li::marker {
+  color: rgba(59, 130, 246, 0.8);
+  font-weight: 600;
+}
+
+/* Fix missing list elements (from bad HTML) */
+.notes-content > ul, .notes-content > ol {
+  display: block !important;
+  list-style-position: outside !important;
+}
+
+.notes-content > ul > li, .notes-content > ol > li {
+  display: list-item !important;
+}
+
+/* Ensure proper margins on lists within paragraphs */
+.notes-content p + ul,
+.notes-content p + ol {
+  margin-top: -0.5rem;
+}
+
+/* Inline elements with better contrast */
+.notes-content strong {
+  font-weight: 600;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+/* Enhanced code styling */
+.notes-content code {
+  font-family: 'SFMono-Regular', 'Cascadia Code', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.92em;
+  background-color: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  border-radius: 4px;
+  padding: 0.2em 0.5em;
+  color: #93c5fd; /* Light blue for code */
+  white-space: nowrap;
+  margin: 0 0.1em;
+}
+
+/* Links with hover effect */
+.notes-content a {
+  color: #3b82f6;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  padding-bottom: 0.05em;
+}
+
+.notes-content a:hover {
+  color: #60a5fa;
+  border-bottom-color: rgba(96, 165, 250, 0.6);
+}
+
+/* Block quotes with better styling */
+.notes-content blockquote {
+  border-left: 3px solid #3b82f6;
+  padding: 0.8rem 0 0.8rem 1.5rem;
+  margin: 1.8rem 0;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Code blocks - preformatted text */
+.notes-content pre {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-radius: 6px;
+  padding: 1.2rem;
+  overflow-x: auto;
+  margin: 1.8rem 0;
+  font-family: 'SFMono-Regular', 'Cascadia Code', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.notes-content pre code {
+  background: none;
+  padding: 0;
+  white-space: pre;
+  font-size: inherit;
+  color: #e2e8f0;
+  border: none;
+}
+
+/* Tables */
+.notes-content table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.8rem 0;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.notes-content th {
+  background-color: rgba(15, 23, 42, 0.6);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+  color: #fff;
+}
+
+.notes-content td {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+}
+
+.notes-content tr:last-child td {
+  border-bottom: none;
+}
+
+.notes-content tr:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.3);
+}
+
+/* Spacing */
+.notes-content > *:first-child {
+  margin-top: 0;
+}
+
+.notes-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Fix for improperly nested HTML content */
+.notes-content *:not(h1, h2, h3, h4, h5, h6, p, ul, ol, li, blockquote, pre, code, table, tr, td, th) {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Ensure paragraphs maintain proper spacing */
+.notes-content li p {
+  margin-bottom: 0.5rem; /* Less margin inside list items */
+}
+
+/* Ensure lists are visible even if incorrectly formatted */
+.notes-content ul, .notes-content ol {
+  display: block !important;
+}
